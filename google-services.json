@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805582660558",
+    "project_id": "tbdfridge",
+    "storage_bucket": "tbdfridge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805582660558:android:60ce14ac690a2512ebc19f",
+        "android_client_info": {
+          "package_name": "com.anonymous.Monexpo2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY617GgwaCxsQstRoNxNGnqpeYanNsEkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

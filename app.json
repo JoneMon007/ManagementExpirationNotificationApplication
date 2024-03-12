@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Monexpo2",
+    "slug": "Monexpo2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.Monexpo2",
+      "googleServicesFlie": "/googleServicesFlie.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
