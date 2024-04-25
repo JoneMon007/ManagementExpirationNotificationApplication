@@ -11,7 +11,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
 
@@ -58,7 +58,7 @@ export default function AddItemScreen() {
   async function addItem() {
     const currentDate = new Date(); // สร้างวันที่ปัจจุบัน
     currentDate.setDate(currentDate.getDate() + 1); // เพิ่มวันที่ปัจจุบันด้วย 1
-    const userRef = doc(db, "Myfridge", "UserID");
+    const userRef = doc(db, "Myfridge", auth.currentUser.uid);
     const postRef = collection(userRef, "UserDetail");
     const imageUrl = await uploadImageAsync(image);
     try {

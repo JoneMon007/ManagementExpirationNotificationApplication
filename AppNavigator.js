@@ -1,13 +1,5 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -17,41 +9,54 @@ import ShoppingListScreen from "./src/ShoppingListScreen";
 import AddItemScreen from "./src/AddItemScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EditScreen from "./src/EditScreen";
+import Register from "./src/login/Register";
+import { auth } from "./firebase/firebase";
+import { signOut } from "firebase/auth";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 function StackNavigator() {
+  useEffect(() => {
+    console.log("AppNav useeffect");
+  }, []);
+
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="AddItem" component={AddItemScreen} />
       <Stack.Screen name="ShoppingList" component={ShoppingListScreen} />
       <Stack.Screen name="EditScreen" component={EditScreen} />
+      <Stack.Screen name="Register" component={Register} />
     </Stack.Navigator>
   );
 }
 
-function TabNavigator() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={StackNavigator} />
-      <Tab.Screen name="AddItem" component={AddItemScreen} />
-      <Tab.Screen name="ShoppingList" component={ShoppingListScreen} />
-    </Tab.Navigator>
-  );
-}
-
 export default function App() {
+  const logOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("logout success");
+      })
+      .catch((error) => {
+        console.log("logout error ", error);
+      });
+  };
+
   return (
     <NavigationContainer>
       <View style={styles.header}>
         <Text style={styles.title}>My freidge</Text>
+        <MaterialCommunityIcons
+          name="logout"
+          color={"#f0edf6"}
+          size={26}
+          onPress={logOut}
+        />
       </View>
       <Tab.Navigator
         initialRouteName="HomeTab"
-        inactiveColor="#f0edf6"
         barStyle={{ backgroundColor: "#4CAF50" }}
       >
         <Tab.Screen
@@ -102,10 +107,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: "#4CAF50",
     alignItems: "center",
+    flexDirection: "row",
   },
   title: {
     fontSize: 24,
     color: "white",
+    alignItems: "center",
+    minHeight: "50px",
+    minWidth: "20%",
+    maxWidth: 500,
   },
   addButton: {
     margin: 15,
