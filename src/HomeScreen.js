@@ -9,8 +9,9 @@ import {
   FlatList,
   RefreshControl,
   Button,
+  TextInput,
 } from "react-native";
-import { db } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { AntDesign } from "@expo/vector-icons";
@@ -24,6 +25,12 @@ export default function HomeScreen() {
   const [documentId, setDocumentId] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation(); // ใช้ hook useNavigation
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -33,16 +40,12 @@ export default function HomeScreen() {
     }),
   });
 
-  const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
   async function food() {
     setRefreshing(true);
+    console.log("Loading food");
     try {
       const querySnapshot = await getDocs(
-        collection(db, "Myfridge", "UserID", "UserDetail")
+        collection(db, "Myfridge", auth.currentUser.uid, "UserDetail")
       );
 
       const data = querySnapshot.docs.map((item) => item.data());
@@ -56,19 +59,23 @@ export default function HomeScreen() {
 
       foodData.forEach((foodData) => {
         const expiryDate = new Date(foodData?.Time_End?.toDate());
-
+        // console.log(expiryDate);
         const currentDate = new Date();
         const timeDifference = expiryDate - currentDate;
         const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        console.log("timeDiff ", timeDiff);
 
-        console.log({
-          NameFood: foodData?.NameFood,
-          timeDifference: timeDiff,
-        });
-
+        if (timeDiff <= 7) {
+          console.log("timeDifference <= 7");
+          schedulePushNotification(foodData?.NameFood, timeDiff);
+        }
+        if (timeDiff <= 3) {
+          console.log("timeDifference <= 3");
+          schedulePushNotification(foodData?.NameFood, timeDiff);
+        }
         if (timeDiff <= 0) {
           console.log("timeDifference <= 0");
-          schedulePushNotification(foodData?.NameFood);
+          schedulePushNotification(foodData?.NameFood, timeDiff);
         }
       });
 
@@ -82,7 +89,46 @@ export default function HomeScreen() {
     setRefreshing(false);
   }
 
+  async function schedulePushNotification(foodName, timeDiff) {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: foodName + ` is going to expired! in ${timeDiff} day 📬`,
+        body: foodName + ` is going to expired! in ${timeDiff} day`,
+        data: { data: "MyFridge" },
+      },
+      trigger: { seconds: 2 },
+    });
+    console.log("notification success");
+  }
+
+  //ค้นหา;
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+
+    if (!text) {
+      console.log("handelSearch !text");
+      setFilteredData(null);
+      return;
+    }
+
+    if (text) {
+      console.log("handelSearch text");
+      // ทำการกรองหรือค้นหาข้อมูลที่นี่
+      const newData = foodList?.filter((item) => {
+        // คุณอาจต้องปรับเงื่อนไขกรองให้ตรงกับข้อมูลของคุณ
+        const itemData = item?.NameFood
+          ? item?.NameFood.toUpperCase()
+          : "".toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+      // setFoodList(newData);
+    }
+  };
+
   useEffect(() => {
+    console.log("food useEffect");
     food();
   }, []);
 
@@ -110,55 +156,65 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <FlatList
-      data={foodList}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={food} />
-      }
-      renderItem={({ item }) => {
-        let dateString = "";
-        const date = item.Time_End?.toDate(); // แปลงเป็นออบเจกต์ Date ของ JavaScript
-        const date1 = item.Time_start?.toDate(); // แปลงเป็นออบเจกต์ Date ของ JavaScript
-        dateString_End = date?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
-        dateString_start = date1?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
-        return (
-          <View style={styles.container}>
-            <ScrollView style={styles.itemsContainer}>
-              <View style={styles.item}>
-                <Image
-                  source={{
-                    uri: item?.image_url,
-                  }}
-                  style={styles.itemImage}
-                />
-                <Text>
-                  ชื่ออาหาร {item?.NameFood}
-                  {"\n"}
-                  วันที่ซื้อ {dateString_start}
-                  {"\n"}
-                  วันหมดอายุ {dateString_End}
-                  {"\n"}
-                </Text>
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={() =>
-                    navigation.navigate("EditScreen", { item, documentId })
-                  }
-                >
-                  <AntDesign name="edit" size={16} color="black" />
-                </TouchableOpacity>
-                <Button
-                  title="Press to schedule a notification"
-                  onPress={async () => {
-                    await schedulePushNotification();
-                  }}
-                />
-              </View>
-            </ScrollView>
-          </View>
-        );
-      }}
-    />
+    <>
+      <TextInput
+        placeholder="Search here..."
+        value={searchQuery}
+        onChangeText={handleSearch} // Make sure to pass the handleSearch function here
+        style={styles.searchInput} // Assuming you have styles defined for the search input
+      />
+
+      <FlatList
+        data={searchQuery ? filteredData : foodList}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={food} />
+        }
+        renderItem={({ item }) => {
+          let dateString = "";
+          const date = item.Time_End?.toDate(); // แปลงเป็นออบเจกต์ Date ของ JavaScript
+          const date1 = item.Time_start?.toDate(); // แปลงเป็นออบเจกต์ Date ของ JavaScript
+          dateString_End = date?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
+          dateString_start = date1?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
+
+          return (
+            //อันที่2
+
+            <View style={styles.container}>
+              {/* Place the TextInput outside of the ScrollView to ensure it's only rendered once */}
+              <ScrollView style={styles.itemsContainer}>
+                {/* Loop through your items here */}
+                <View style={styles.item}>
+                  <Image
+                    source={{
+                      uri: item?.image_url
+                        ? item?.image_url
+                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                    }}
+                    style={styles.itemImage}
+                  />
+                  <Text>
+                    ชื่ออาหาร {item?.NameFood}
+                    {"\n"}
+                    วันที่ซื้อ {dateString_start}
+                    {"\n"}
+                    วันหมดอายุ {dateString_End}
+                    {"\n"}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() =>
+                      navigation.navigate("EditScreen", { item, documentId })
+                    }
+                  >
+                    <AntDesign name="edit" size={16} color="black" />
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            </View>
+          );
+        }}
+      />
+    </>
   );
 }
 
@@ -199,18 +255,6 @@ async function registerForPushNotificationsAsync() {
   }
 
   return token;
-}
-
-async function schedulePushNotification(foodName) {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: foodName + " is going to expired! 📬",
-      body: foodName + " in the notification body",
-      data: { data: "MyFridge" },
-    },
-    trigger: { seconds: 2 },
-  });
-  console.log("notification success");
 }
 
 // async function schedulePushNotification() {

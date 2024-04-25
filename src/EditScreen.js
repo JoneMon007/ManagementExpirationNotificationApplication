@@ -11,7 +11,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
 
@@ -59,7 +59,7 @@ export default function EditScreen({ route }) {
     const docRef = doc(
       db,
       "Myfridge",
-      "UserID",
+      auth.currentUser.uid,
       "UserDetail",
       item?.documentId
     );
