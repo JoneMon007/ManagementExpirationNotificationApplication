@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import { auth, db } from "../../firebase/firebase";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const RegistrationScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -75,8 +76,10 @@ const RegistrationScreen = ({ navigation }) => {
         style={styles.input}
         secureTextEntry
       />
-
-      <Button title="Register" onPress={signup} color="#1abc9c" />
+      <TouchableOpacity style={styles.button} onPress={signup}>
+        <Text style={styles.buttonText}>REGISTER</Text>
+      </TouchableOpacity>
+      {/* <Button title="Register" onPress={signup} color="#1abc9c" /> */}
       {/* <Button
         title="Register"
         onPress={() => {
@@ -93,21 +96,42 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "white",
+  },
+  header: {
+    backgroundColor: "#4CAF50",
+    width: "100%",
+    padding: 20,
+  },
+  headerText: {
+    textAlign: "center",
+    color: "white",
+    fontSize: 24,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginVertical: 20,
   },
   input: {
     width: "80%",
-    height: 40,
-    borderColor: "gray",
+    padding: 15,
     borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 10,
+    borderColor: "gray",
     borderRadius: 5,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 16,
   },
 });
 

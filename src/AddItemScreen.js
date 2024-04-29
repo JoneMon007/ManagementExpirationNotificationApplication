@@ -14,16 +14,35 @@ import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
+import dayjs from "dayjs";
 
 export default function AddItemScreen() {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [location, setLocation] = useState("Fridge");
+  const [category, setCategory] = useState("vegetable");
   const [image, setImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const handleDateChange = (newDate) => {
-    setSelectedDate(newDate);
+  const handleCategoryChange = (itemValue) => {
+    setCategory(itemValue);
+
+    if (itemValue === "meat") {
+      const seven = dayjs().add(7, "day").toDate();
+      console.log("meat seven ", seven);
+      setSelectedDate(seven);
+
+      console.log("selectedDate addItemScreen", selectedDate);
+    } else if (itemValue === "vegetable") {
+      const fourteen = dayjs().add(14, "day").toDate();
+      setSelectedDate(fourteen);
+      console.log("vegetable fourteen ", fourteen);
+    } else if (itemValue === "drink") {
+      const month = dayjs().add(30, "day").toDate();
+      console.log("drink month ", month);
+    } else {
+      const fourteen = dayjs().add(14, "day").toDate();
+      console.log("Fruit fourteen ", fourteen);
+    }
   };
 
   const requestPermission = async () => {
@@ -56,30 +75,32 @@ export default function AddItemScreen() {
   // }
 
   async function addItem() {
-    const currentDate = new Date(); // สร้างวันที่ปัจจุบัน
-    currentDate.setDate(currentDate.getDate() + 1); // เพิ่มวันที่ปัจจุบันด้วย 1
-    const userRef = doc(db, "Myfridge", auth.currentUser.uid);
-    const postRef = collection(userRef, "UserDetail");
-    const imageUrl = await uploadImageAsync(image);
-    try {
-      const item = await addDoc(postRef, {
-        NameFood: itemName,
-        Time_start: new Date(Date.now()),
-        Quantity: quantity,
-        Time_End: selectedDate,
-        image_url: imageUrl,
-      });
+    // const userRef = doc(db, "Myfridge", auth.currentUser.uid);
+    // const postRef = collection(userRef, "UserDetail");
+    // const imageUrl = await uploadImageAsync(image);
 
-      await updateDoc(item, {
-        documentId: item.id,
-      });
+    try {
+      // const item = await addDoc(postRef, {
+      //   NameFood: itemName,
+      //   Category: category,
+      //   Time_start: new Date(Date.now()),
+      //   Quantity: quantity,
+      //   Time_End: selectedDate,
+      //   image_url: imageUrl,
+      // });
+
+      console.log("category :", category);
+
+      // await updateDoc(item, {
+      //   documentId: item.id,
+      // });
     } catch (error) {
       console.log(error);
     }
     setItemName("");
     setQuantity("");
     setImage(null);
-    setSelectedDate(new Date());
+    //setSelectedDate(new Date());
   }
   return (
     <View style={styles.container}>
@@ -99,12 +120,14 @@ export default function AddItemScreen() {
       </TouchableOpacity>
 
       <Picker
-        selectedValue={location}
+        selectedValue={category}
         style={styles.picker}
-        onValueChange={(itemValue) => setLocation(itemValue)}
+        onValueChange={handleCategoryChange}
       >
-        <Picker.Item label="Fridge" value="Fridge" />
-        <Picker.Item label="Freezer" value="Freezer" />
+        <Picker.Item label="Vegetable 🥦" value="vegetable" />
+        <Picker.Item label="Drink 🥂" value="drink" />
+        <Picker.Item label="Fruit 🍎" value="fruit" />
+        <Picker.Item label="Meat 🥩" value="meat" />
       </Picker>
 
       <TextInput
@@ -120,7 +143,7 @@ export default function AddItemScreen() {
         value={quantity}
         onChangeText={setQuantity}
       />
-      <DateTimeComponent onDateChange={handleDateChange} />
+      <DateTimeComponent value={selectedDate} />
       <Button title="Add item" onPress={addItem} />
       {/* <Button
         title="Add item"

@@ -65,16 +65,16 @@ export default function HomeScreen() {
         const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         console.log("timeDiff ", timeDiff);
 
-        if (timeDiff <= 7) {
-          console.log("timeDifference <= 7");
+        if (timeDiff === 7) {
+          console.log("timeDifference = 7");
           schedulePushNotification(foodData?.NameFood, timeDiff);
         }
-        if (timeDiff <= 3) {
-          console.log("timeDifference <= 3");
+        if (timeDiff === 3) {
+          console.log("timeDifference = 3");
           schedulePushNotification(foodData?.NameFood, timeDiff);
         }
         if (timeDiff <= 0) {
-          console.log("timeDifference <= 0");
+          console.log("timeDifference = 0");
           schedulePushNotification(foodData?.NameFood, timeDiff);
         }
       });
@@ -178,39 +178,45 @@ export default function HomeScreen() {
 
           return (
             //อันที่2
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("EditScreen", { item, documentId })
+              }
+            >
+              <View style={styles.container}>
+                {/* Place the TextInput outside of the ScrollView to ensure it's only rendered once */}
+                <ScrollView style={styles.itemsContainer}>
+                  {/* Loop through your items here */}
+                  <View style={styles.item}>
+                    <Image
+                      source={{
+                        uri: item?.image_url
+                          ? item?.image_url
+                          : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                      }}
+                      style={styles.itemImage}
+                    />
 
-            <View style={styles.container}>
-              {/* Place the TextInput outside of the ScrollView to ensure it's only rendered once */}
-              <ScrollView style={styles.itemsContainer}>
-                {/* Loop through your items here */}
-                <View style={styles.item}>
-                  <Image
-                    source={{
-                      uri: item?.image_url
-                        ? item?.image_url
-                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-                    }}
-                    style={styles.itemImage}
-                  />
-                  <Text>
-                    ชื่ออาหาร {item?.NameFood}
-                    {"\n"}
-                    วันที่ซื้อ {dateString_start}
-                    {"\n"}
-                    วันหมดอายุ {dateString_End}
-                    {"\n"}
-                  </Text>
-                  <TouchableOpacity
+                    <Text>
+                      ชื่ออาหาร {item?.NameFood}
+                      {"\n"}
+                      วันที่ซื้อ {dateString_start}
+                      {"\n"}
+                      วันหมดอายุ {dateString_End}
+                      {"\n"}
+                    </Text>
+                    {/* <TouchableOpacity
                     style={styles.addButton}
                     onPress={() =>
                       navigation.navigate("EditScreen", { item, documentId })
                     }
                   >
                     <AntDesign name="edit" size={16} color="black" />
-                  </TouchableOpacity>
-                </View>
-              </ScrollView>
-            </View>
+                  </TouchableOpacity> */}
+                  </View>
+                </ScrollView>
+              </View>
+            </TouchableOpacity>
           );
         }}
       />
@@ -256,18 +262,6 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
-
-// async function schedulePushNotification() {
-//   await Notifications.scheduleNotificationAsync({
-//     content: {
-//       title: "You've got mail! 📬",
-//       body: "Here is the notification body",
-//       data: { data: "MyFridge" },
-//     },
-//     trigger: { seconds: 2 },
-//   });
-//   console.log("notification success");
-// }
 
 const styles = StyleSheet.create({
   container: {
