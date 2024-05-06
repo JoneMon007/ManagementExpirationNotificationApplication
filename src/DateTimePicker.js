@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Button, Platform } from "react-native";
+import { View, Button, Platform, StyleSheet, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Text } from "react-native-elements";
 
 export default function DateTimeComponent({ value }) {
   const [date, setDate] = useState(new Date());
@@ -33,7 +34,9 @@ export default function DateTimeComponent({ value }) {
   return (
     <View>
       <View>
-        <Button onPress={showDatepicker} title="Show date picker!" />
+        <Pressable style={styles.button} onPress={showDatepicker}>
+          <Text style={styles.text}>Show date picker!</Text>
+        </Pressable>
       </View>
       {show && (
         <DateTimePicker
@@ -48,3 +51,21 @@ export default function DateTimeComponent({ value }) {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#4CAF50",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
+});

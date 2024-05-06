@@ -12,6 +12,7 @@ import EditScreen from "./src/EditScreen";
 import Register from "./src/login/Register";
 import { auth } from "./firebase/firebase";
 import { signOut } from "firebase/auth";
+import Profile from "./src/Profile";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
@@ -24,11 +25,24 @@ function StackNavigator() {
 
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="AddItem" component={AddItemScreen} />
-      <Stack.Screen name="ShoppingList" component={ShoppingListScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AddItem"
+        component={AddItemScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ShoppingList"
+        component={ShoppingListScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="EditScreen" component={EditScreen} />
       <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 }
@@ -48,32 +62,35 @@ export default function App() {
     <NavigationContainer>
       <View style={styles.header}>
         <Text style={styles.title}>My freidge</Text>
-        <MaterialCommunityIcons
+        {/* <MaterialCommunityIcons
           name="logout"
           color={"#f0edf6"}
           size={26}
           onPress={logOut}
-        />
+        /> */}
       </View>
       <Tab.Navigator
         initialRouteName="HomeTab"
-        barStyle={{ backgroundColor: "#4CAF50" }}
+        barStyle={{ backgroundColor: "#ffff" }}
+        activeColor="#000000"
+        inactiveColor="#5db075"
       >
         <Tab.Screen
           name="HomeTab"
           component={StackNavigator}
           options={{
-            // tabBarLabel: "Home",
+            tabBarLabel: "โฮม",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
+            title: false,
           }}
         />
         <Tab.Screen
           name="AddItem"
           component={AddItemScreen}
           options={{
-            tabBarLabel: "Add Item",
+            tabBarLabel: "เพิ่มรายการ",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="plus-box" color={color} size={26} />
             ),
@@ -83,13 +100,23 @@ export default function App() {
           name="ShoppingList"
           component={ShoppingListScreen}
           options={{
-            tabBarLabel: "List",
+            tabBarLabel: "รายการ",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="format-list-bulleted"
                 color={color}
                 size={26}
               />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="profile"
+          component={Profile}
+          options={{
+            tabBarLabel: "โปรไฟล์",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
             ),
           }}
         />
@@ -100,22 +127,23 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
   header: {
-    paddingTop: 40,
-    paddingBottom: 10,
+    padding: 40,
     backgroundColor: "#4CAF50",
     alignItems: "center",
     flexDirection: "row",
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 50,
     color: "white",
     alignItems: "center",
     minHeight: "50px",
     minWidth: "20%",
     maxWidth: 500,
+    fontWeight: "800",
   },
   addButton: {
     margin: 15,

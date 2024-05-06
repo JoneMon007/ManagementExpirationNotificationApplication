@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Pressable,
 } from "react-native";
 import { Button } from "react-native-paper";
 
@@ -110,9 +111,12 @@ export default function ShoppingListScreen() {
           <Text>Clear checked items</Text>
         </TouchableOpacity>
       </View>
-      <Button mode="contained" onPress={() => addTodo(input)}>
+      <Pressable style={styles.button} onPress={() => addTodo(input)}>
+        <Text style={styles.text}>save</Text>
+      </Pressable>
+      {/* <Button mode="contained" onPress={() => addTodo(input)}>
         save
-      </Button>
+      </Button> */}
     </View>
   );
 }
@@ -129,7 +133,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 25,
+    color: "#4CAF50",
+    alignItems: "center",
+    minHeight: "50px",
+    minWidth: "20%",
+    maxWidth: 500,
+    fontWeight: "800",
   },
   closeButton: {
     padding: 10,
@@ -157,5 +167,21 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#4CAF50",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
   },
 });

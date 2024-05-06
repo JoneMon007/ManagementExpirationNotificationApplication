@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Button,
   Image,
+  Pressable,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
@@ -22,6 +23,7 @@ export default function AddItemScreen() {
   const [category, setCategory] = useState("vegetable");
   const [image, setImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
 
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
@@ -106,9 +108,6 @@ export default function AddItemScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Add an item</Text>
-        <TouchableOpacity style={styles.closeButton}>
-          <Text>X</Text>
-        </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
@@ -143,13 +142,18 @@ export default function AddItemScreen() {
         value={quantity}
         onChangeText={setQuantity}
       />
+
       <DateTimeComponent value={selectedDate} />
-      <Button title="Add item" onPress={addItem} />
+
+      <Pressable style={styles.button} onPress={addItem}>
+        <Text style={styles.text}>Add item</Text>
+      </Pressable>
+
       {/* <Button
         title="Add item"
         onPress={() => console.log(selectedDate + "AddItemScreen")}
       /> */}
-      <Button title="Cancel" onPress={() => {}} />
+      {/* <Button style={styles.button} title="Cancel" onPress={() => {}} /> */}
     </View>
   );
 }
@@ -166,16 +170,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 25,
+    color: "#4CAF50",
+    alignItems: "center",
+    minHeight: "50px",
+    minWidth: "20%",
+    maxWidth: 500,
+    fontWeight: "800",
   },
   closeButton: {
     padding: 10,
   },
   input: {
-    marginVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    // marginVertical: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#ccc",
+    // padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
     padding: 10,
+    margin: 10,
   },
   imagePicker: {
     justifyContent: "center",
@@ -188,5 +205,21 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginTop: 10,
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#4CAF50",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
   },
 });

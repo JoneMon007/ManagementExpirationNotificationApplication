@@ -75,7 +75,7 @@ export default function HomeScreen() {
         }
         if (timeDiff <= 0) {
           console.log("timeDifference = 0");
-          schedulePushNotification(foodData?.NameFood, timeDiff);
+          schedulePushNotification2(foodData?.NameFood, timeDiff);
         }
       });
 
@@ -94,6 +94,18 @@ export default function HomeScreen() {
       content: {
         title: foodName + ` is going to expired! in ${timeDiff} day 📬`,
         body: foodName + ` is going to expired! in ${timeDiff} day`,
+        data: { data: "MyFridge" },
+      },
+      trigger: { seconds: 2 },
+    });
+    console.log("notification success");
+  }
+
+  async function schedulePushNotification2(foodName) {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: foodName + ` is expired! 📬`,
+        body: foodName + ` is expired! `,
         data: { data: "MyFridge" },
       },
       trigger: { seconds: 2 },
@@ -157,12 +169,14 @@ export default function HomeScreen() {
 
   return (
     <>
-      <TextInput
-        placeholder="Search here..."
-        value={searchQuery}
-        onChangeText={handleSearch} // Make sure to pass the handleSearch function here
-        style={styles.searchInput} // Assuming you have styles defined for the search input
-      />
+      <View style={styles.searchBar}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
 
       <FlatList
         data={searchQuery ? filteredData : foodList}
@@ -175,7 +189,13 @@ export default function HomeScreen() {
           const date1 = item.Time_start?.toDate(); // แปลงเป็นออบเจกต์ Date ของ JavaScript
           dateString_End = date?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
           dateString_start = date1?.toDateString(); // แปลงเป็นสตริงวันที่ที่อ่านได้
-
+          const expiryDate = new Date(item?.Time_End?.toDate());
+          const currentDate = new Date();
+          const timeDifference = expiryDate - currentDate;
+          const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+          if (timeDiff >= 0) {
+            const time99 = "หมดอายุแล้ว";
+          }
           return (
             //อันที่2
             <TouchableOpacity
@@ -183,39 +203,28 @@ export default function HomeScreen() {
                 navigation.navigate("EditScreen", { item, documentId })
               }
             >
-              <View style={styles.container}>
-                {/* Place the TextInput outside of the ScrollView to ensure it's only rendered once */}
-                <ScrollView style={styles.itemsContainer}>
-                  {/* Loop through your items here */}
-                  <View style={styles.item}>
-                    <Image
-                      source={{
-                        uri: item?.image_url
-                          ? item?.image_url
-                          : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-                      }}
-                      style={styles.itemImage}
-                    />
-
-                    <Text>
-                      ชื่ออาหาร {item?.NameFood}
-                      {"\n"}
-                      วันที่ซื้อ {dateString_start}
-                      {"\n"}
-                      วันหมดอายุ {dateString_End}
-                      {"\n"}
+              <ScrollView>
+                <View style={styles.itemContainer}>
+                  <Image
+                    source={{
+                      uri: item?.image_url
+                        ? item?.image_url
+                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                    }}
+                    style={styles.image}
+                  />
+                  <View style={styles.detailsContainer}>
+                    <Text style={styles.foodName}>{item?.NameFood}</Text>
+                    <Text style={styles.date}>วันผลิต: {dateString_start}</Text>
+                    <Text style={styles.date}>
+                      วันที่อายุ: {dateString_End}
                     </Text>
-                    {/* <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() =>
-                      navigation.navigate("EditScreen", { item, documentId })
-                    }
-                  >
-                    <AntDesign name="edit" size={16} color="black" />
-                  </TouchableOpacity> */}
+                    <Text style={styles.date}>
+                      วันหมดอายุ: {timeDiff >= 0 ? timeDiff : "หมดอายุแล้ว"}
+                    </Text>
                   </View>
-                </ScrollView>
-              </View>
+                </View>
+              </ScrollView>
             </TouchableOpacity>
           );
         }}
@@ -266,7 +275,54 @@ async function registerForPushNotificationsAsync() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#91d6a5",
+    margin: 10,
+  },
+  image: {
+    width: 60,
+    height: 60,
+    margin: 10,
+    borderRadius: 10,
+  },
+  detailsContainer: {
+    flex: 1,
+  },
+  foodName: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#ffffff",
+  },
+  date: {
+    fontSize: 18,
+    color: "#ffffff",
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 4,
+    margin: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingHorizontal: 8,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   header: {
     paddingTop: 40,
