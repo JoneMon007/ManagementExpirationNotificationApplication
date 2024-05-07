@@ -8,6 +8,7 @@ import {
   Button,
   Image,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
@@ -24,7 +25,11 @@ export default function AddItemScreen() {
   const [image, setImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
+  const [unit, setunit] = useState("Gram");
 
+  const handleunitChange = (itemValue) => {
+    setunit(itemValue);
+  };
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
 
@@ -40,9 +45,11 @@ export default function AddItemScreen() {
       console.log("vegetable fourteen ", fourteen);
     } else if (itemValue === "drink") {
       const month = dayjs().add(30, "day").toDate();
+      setSelectedDate(month);
       console.log("drink month ", month);
     } else {
       const fourteen = dayjs().add(14, "day").toDate();
+      setSelectedDate(fourteen);
       console.log("Fruit fourteen ", fourteen);
     }
   };
@@ -72,30 +79,31 @@ export default function AddItemScreen() {
     }
   };
 
-  // async function handleUploadImage(uri) {
-  //   await saveImageInfoToFirestore(imageUrl);
-  // }
+  async function handleUploadImage(uri) {
+    await saveImageInfoToFirestore(imageUrl);
+  }
 
   async function addItem() {
-    // const userRef = doc(db, "Myfridge", auth.currentUser.uid);
-    // const postRef = collection(userRef, "UserDetail");
-    // const imageUrl = await uploadImageAsync(image);
+    const userRef = doc(db, "Myfridge", auth.currentUser.uid);
+    const postRef = collection(userRef, "UserDetail");
+    const imageUrl = await uploadImageAsync(image);
 
     try {
-      // const item = await addDoc(postRef, {
-      //   NameFood: itemName,
-      //   Category: category,
-      //   Time_start: new Date(Date.now()),
-      //   Quantity: quantity,
-      //   Time_End: selectedDate,
-      //   image_url: imageUrl,
-      // });
+      const item = await addDoc(postRef, {
+        NameFood: itemName,
+        Category: category,
+        Time_start: new Date(Date.now()),
+        Quantity: quantity,
+        Time_End: selectedDate,
+        image_url: imageUrl,
+        Unit: unit,
+      });
 
       console.log("category :", category);
 
-      // await updateDoc(item, {
-      //   documentId: item.id,
-      // });
+      await updateDoc(item, {
+        documentId: item.id,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -105,56 +113,72 @@ export default function AddItemScreen() {
     //setSelectedDate(new Date());
   }
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Add an item</Text>
-      </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Add an item</Text>
+        </View>
 
-      <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-        {image ? (
-          <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />
-        ) : (
-          <Text>Add Photo</Text>
-        )}
-      </TouchableOpacity>
+        <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+          {image ? (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100 }}
+            />
+          ) : (
+            <Text>Add Photo</Text>
+          )}
+        </TouchableOpacity>
 
-      <Picker
-        selectedValue={category}
-        style={styles.picker}
-        onValueChange={handleCategoryChange}
-      >
-        <Picker.Item label="Vegetable 🥦" value="vegetable" />
-        <Picker.Item label="Drink 🥂" value="drink" />
-        <Picker.Item label="Fruit 🍎" value="fruit" />
-        <Picker.Item label="Meat 🥩" value="meat" />
-      </Picker>
+        <Picker
+          selectedValue={category}
+          style={styles.picker}
+          onValueChange={handleCategoryChange}
+        >
+          <Picker.Item label="Vegetable 🥦" value="vegetable" />
+          <Picker.Item label="Drink 🥂" value="drink" />
+          <Picker.Item label="Fruit 🍎" value="fruit" />
+          <Picker.Item label="Meat 🥩" value="meat" />
+        </Picker>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Item name"
-        value={itemName}
-        onChangeText={setItemName}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Item name"
+          value={itemName}
+          onChangeText={setItemName}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Quantity"
-        value={quantity}
-        onChangeText={setQuantity}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Quantity"
+          value={quantity}
+          onChangeText={setQuantity}
+        />
+        <Picker
+          selectedValue={unit}
+          style={styles.picker}
+          onValueChange={handleunitChange}
+        >
+          <Picker.Item label="กรัม" value="Gram" />
+          <Picker.Item label="กิโลกรัม" value="Kilo-gram" />
+          <Picker.Item label="ชิ้น" value="Piece" />
+          <Picker.Item label="ขวด" value="bottle" />
+          <Picker.Item label="แพ็ค" value="pack" />
+        </Picker>
 
-      <DateTimeComponent value={selectedDate} />
+        <DateTimeComponent value={selectedDate} />
 
-      <Pressable style={styles.button} onPress={addItem}>
-        <Text style={styles.text}>Add item</Text>
-      </Pressable>
+        <Pressable style={styles.button} onPress={addItem}>
+          <Text style={styles.text}>Add item</Text>
+        </Pressable>
 
-      {/* <Button
+        {/* <Button
         title="Add item"
         onPress={() => console.log(selectedDate + "AddItemScreen")}
       /> */}
-      {/* <Button style={styles.button} title="Cancel" onPress={() => {}} /> */}
-    </View>
+        {/* <Button style={styles.button} title="Cancel" onPress={() => {}} /> */}
+      </View>
+    </ScrollView>
   );
 }
 

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Button,
   Image,
+  Pressable,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
@@ -14,6 +15,8 @@ import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
+import { ScrollView } from "react-native-gesture-handler";
+import dayjs from "dayjs";
 
 export default function EditScreen({ route }) {
   const { item, documentId } = route.params;
@@ -21,6 +24,31 @@ export default function EditScreen({ route }) {
   const [quantity, setQuantity] = useState(item?.Quantity);
   const [image, setImage] = useState(item?.image_url);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [category, setCategory] = useState("vegetable");
+
+  const handleCategoryChange = (itemValue) => {
+    setCategory(itemValue);
+
+    if (itemValue === "meat") {
+      const seven = dayjs().add(7, "day").toDate();
+      console.log("meat seven ", seven);
+      setSelectedDate(seven);
+
+      console.log("selectedDate addItemScreen", selectedDate);
+    } else if (itemValue === "vegetable") {
+      const fourteen = dayjs().add(14, "day").toDate();
+      setSelectedDate(fourteen);
+      console.log("vegetable fourteen ", fourteen);
+    } else if (itemValue === "drink") {
+      const month = dayjs().add(30, "day").toDate();
+      setSelectedDate(month);
+      console.log("drink month ", month);
+    } else {
+      const fourteen = dayjs().add(14, "day").toDate();
+      setSelectedDate(fourteen);
+      console.log("Fruit fourteen ", fourteen);
+    }
+  };
 
   console.log("item==>", item, "doc==>", documentId);
 
@@ -71,6 +99,7 @@ export default function EditScreen({ route }) {
         Quantity: quantity,
         Time_End: selectedDate,
         image_url: imageUrl,
+        Category: category,
       });
       console.log("Document updated successfully");
     } catch (error) {
@@ -83,43 +112,60 @@ export default function EditScreen({ route }) {
     setSelectedDate(new Date());
   }
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Add an item</Text>
-        <TouchableOpacity style={styles.closeButton}>
-          <Text>X</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Add an item</Text>
+          <TouchableOpacity style={styles.closeButton}>
+            <Text>X</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+          {image ? (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 100, height: 100 }}
+            />
+          ) : (
+            <Text>Add Photo</Text>
+          )}
         </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-        {image ? (
-          <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />
-        ) : (
-          <Text>Add Photo</Text>
-        )}
-      </TouchableOpacity>
+        <Picker
+          selectedValue={category}
+          style={styles.picker}
+          onValueChange={handleCategoryChange}
+        >
+          <Picker.Item label="Vegetable 🥦" value="vegetable" />
+          <Picker.Item label="Drink 🥂" value="drink" />
+          <Picker.Item label="Fruit 🍎" value="fruit" />
+          <Picker.Item label="Meat 🥩" value="meat" />
+        </Picker>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Item name"
-        value={itemName}
-        onChangeText={setItemName}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Item name"
+          value={itemName}
+          onChangeText={setItemName}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Quantity"
-        value={quantity}
-        onChangeText={setQuantity}
-      />
-      <DateTimeComponent onDateChange={handleDateChange} />
-      <Button title="Update item" onPress={addItem} />
-      {/* <Button
+        <TextInput
+          style={styles.input}
+          placeholder="Quantity"
+          value={quantity}
+          onChangeText={setQuantity}
+        />
+        <DateTimeComponent value={selectedDate} />
+        <Pressable style={styles.button} onPress={addItem}>
+          <Text style={styles.text}>Update item</Text>
+        </Pressable>
+        {/* <Button
         title="Add item"
         onPress={() => console.log(selectedDate + "AddItemScreen")}
       /> */}
-      <Button title="Cancel" onPress={() => {}} />
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -135,16 +181,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 25,
+    color: "#4CAF50",
+    alignItems: "center",
+    minHeight: "50px",
+    minWidth: "20%",
+    maxWidth: 500,
+    fontWeight: "800",
   },
   closeButton: {
     padding: 10,
   },
   input: {
-    marginVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    // marginVertical: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#ccc",
+    // padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
     padding: 10,
+    margin: 10,
   },
   imagePicker: {
     justifyContent: "center",
@@ -157,5 +216,21 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginTop: 10,
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#4CAF50",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
   },
 });

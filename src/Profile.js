@@ -1,19 +1,27 @@
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  Button,
-  ImagePicker,
-  StyleSheet,
-} from "react-native";
-import { Header, Divider } from "react-native-elements";
-import { TextInput } from "react-native-paper";
-import { auth } from "../firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
+import * as ImagePicker from "expo-image-picker";
 
-const Profile = ({ name, email, profilePicture }) => {
+const Profile = () => {
+  const [foodData, setFoodData] = useState([]);
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(
+        collection(db, "Myfridge", auth.currentUser.uid)
+      );
+      const data = querySnapshot.docs.map((doc) => doc.data());
+      setFoodData(data);
+    };
+
+    fetchData();
+  }, []);
+
   const handleImageSelect = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -22,7 +30,7 @@ const Profile = ({ name, email, profilePicture }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setProfilePicture(result.uri);
     }
   };
 
@@ -32,36 +40,42 @@ const Profile = ({ name, email, profilePicture }) => {
         console.log("logout success");
       })
       .catch((error) => {
-        console.log("logout error ", error);
+        console.log("logout error", error);
       });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.profilePictureContainer}>
-        {profilePicture ? (
-          <Image
-            source={{ uri: profilePicture }}
-            style={styles.profilePicture}
-          />
-        ) : (
-          <Text style={styles.profilePicturePlaceholder}>Image Profile</Text>
-        )}
+        <Image
+          source={{
+            uri:
+              profilePicture ||
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+          }}
+          style={styles.profilePicture}
+        />
       </View>
-      <Text style={styles.name}>Test1</Text>
-      <Text style={styles.email}>test1@gmail.com</Text>
-      <Text>logout</Text>
-      <MaterialCommunityIcons
-        name="logout"
-        color={"#000"}
-        size={26}
-        onPress={logOut}
-      />
+      {foodData.map((item, index) => (
+        <View key={index}>
+          <Text style={styles.email}>{item.email}99</Text>
+          <Text style={styles.name}>{item.username}99</Text>
+        </View>
+      ))}
+      <Pressable style={styles.button} onPress={logOut}>
+        <Text style={styles.text}>
+          Log Out
+          <MaterialCommunityIcons name="logout" color="#ffff" size={26} />
+        </Text>
+      </Pressable>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
   },
@@ -93,6 +107,23 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   logout: {},
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#4CAF50",
+    marginBottom: 30,
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
 });
 
 export default Profile;

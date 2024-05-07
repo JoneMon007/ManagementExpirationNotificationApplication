@@ -31,6 +31,7 @@ export default function HomeScreen() {
   const responseListener = useRef();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [isConnected, setIsConnected] = useState(false);
 
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -110,7 +111,7 @@ export default function HomeScreen() {
       },
       trigger: { seconds: 2 },
     });
-    console.log("notification success");
+    console.log("notification2 success");
   }
 
   //ค้นหา;
@@ -193,9 +194,8 @@ export default function HomeScreen() {
           const currentDate = new Date();
           const timeDifference = expiryDate - currentDate;
           const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-          if (timeDiff >= 0) {
-            const time99 = "หมดอายุแล้ว";
-          }
+          const backgroundColor = isConnected ? "green" : "red";
+
           return (
             //อันที่2
             <TouchableOpacity
@@ -204,7 +204,14 @@ export default function HomeScreen() {
               }
             >
               <ScrollView>
-                <View style={styles.itemContainer}>
+                <View
+                  style={
+                    // วันที่ มากว่า 7 วัน ส๊เขียว 3 สีเหลือง หมดอายุสีอกง
+                    (timeDiff <= 0 && styles.itemContainer) ||
+                    (timeDiff > 7 && styles.itemContainer_green) ||
+                    (timeDiff > 1 && styles.itemContainer99)
+                  }
+                >
                   <Image
                     source={{
                       uri: item?.image_url
@@ -217,10 +224,10 @@ export default function HomeScreen() {
                     <Text style={styles.foodName}>{item?.NameFood}</Text>
                     <Text style={styles.date}>วันผลิต: {dateString_start}</Text>
                     <Text style={styles.date}>
-                      วันที่อายุ: {dateString_End}
+                      วันหมดอายุ: {dateString_End}
                     </Text>
                     <Text style={styles.date}>
-                      วันหมดอายุ: {timeDiff >= 0 ? timeDiff : "หมดอายุแล้ว"}
+                      จำนวน: {item?.Quantity} {item?.Unit}
                     </Text>
                   </View>
                 </View>
@@ -279,7 +286,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
   },
-  itemContainer: {
+  itemContainer99: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#FFC300",
+    margin: 10,
+  },
+  itemContainer_green: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
@@ -287,6 +304,16 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
     borderRadius: 10,
     backgroundColor: "#91d6a5",
+    margin: 10,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#FF231F7C",
     margin: 10,
   },
   image: {
