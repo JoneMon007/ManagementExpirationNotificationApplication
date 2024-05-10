@@ -132,13 +132,35 @@ export default function HomeScreen() {
         const itemData = item?.NameFood
           ? item?.NameFood.toUpperCase()
           : "".toUpperCase();
+        const itemTimeEnd = item.Time_End?.toDate()
+          ? formatDate(item.Time_End.toDate()) // สมมติว่าคุณมีฟังก์ชัน formatDate ที่ปรับ format วันที่เป็น string
+          : "";
+        const itemcategory = item?.Category ? item.Category.toUpperCase() : "";
         const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
+        const itemDate = item?.dateString?.toUpperCase() || "";
+
+        return (
+          itemData.indexOf(textData) > -1 ||
+          itemTimeEnd.indexOf(textData) > -1 ||
+          itemDate.indexOf(textData) > -1 ||
+          itemcategory.indexOf(textData) > -1
+        );
       });
       setFilteredData(newData);
       // setFoodList(newData);
     }
   };
+  function formatDate(date) {
+    // กำหนดตัวเลือกสำหรับการแสดงวันที่ในภาษาไทยและใช้รูปแบบวันที่แบบไทย
+    const options = {
+      day: "2-digit", // ใช้วันที่แบบ 2 หลัก (เช่น 01, 02, ..., 31)
+      month: "2-digit", // ใช้เดือนแบบ 2 หลัก (เช่น 01, 02, ..., 12)
+      year: "numeric", // ใช้ปีแบบเต็ม (เช่น 2024)
+    };
+
+    // ใช้ toLocaleDateString โดยระบุภาษาเป็น 'th-TH' สำหรับประเทศไทย
+    return date.toLocaleDateString("th-TH", options);
+  }
 
   useEffect(() => {
     console.log("food useEffect");
@@ -173,7 +195,7 @@ export default function HomeScreen() {
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search"
+          placeholder="ค้นหา"
           value={searchQuery}
           onChangeText={handleSearch}
         />
@@ -207,9 +229,11 @@ export default function HomeScreen() {
                 <View
                   style={
                     // วันที่ มากว่า 7 วัน ส๊เขียว 3 สีเหลือง หมดอายุสีอกง
-                    (timeDiff <= 0 && styles.itemContainer) ||
-                    (timeDiff > 7 && styles.itemContainer_green) ||
-                    (timeDiff > 1 && styles.itemContainer99)
+                    timeDiff <= 0
+                      ? styles.itemContainer
+                      : timeDiff <= 3
+                      ? styles.itemContainer_yellow
+                      : styles.itemContainer_green
                   }
                 >
                   <Image
@@ -222,9 +246,11 @@ export default function HomeScreen() {
                   />
                   <View style={styles.detailsContainer}>
                     <Text style={styles.foodName}>{item?.NameFood}</Text>
-                    <Text style={styles.date}>วันผลิต: {dateString_start}</Text>
                     <Text style={styles.date}>
-                      วันหมดอายุ: {dateString_End}
+                      วันผลิต: {formatDate(item.Time_start.toDate())}
+                    </Text>
+                    <Text style={styles.date}>
+                      วันหมดอายุ: {formatDate(item.Time_End.toDate())}
                     </Text>
                     <Text style={styles.date}>
                       จำนวน: {item?.Quantity} {item?.Unit}
@@ -286,7 +312,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
   },
-  itemContainer99: {
+  itemContainer_yellow: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,

@@ -159,11 +159,11 @@ export default function AddItemScreen() {
           style={styles.picker}
           onValueChange={handleunitChange}
         >
-          <Picker.Item label="กรัม" value="Gram" />
-          <Picker.Item label="กิโลกรัม" value="Kilo-gram" />
-          <Picker.Item label="ชิ้น" value="Piece" />
-          <Picker.Item label="ขวด" value="bottle" />
-          <Picker.Item label="แพ็ค" value="pack" />
+          <Picker.Item label="กรัม" value="กรัม" />
+          <Picker.Item label="กิโลกรัม" value="กิโลกรัม" />
+          <Picker.Item label="ชิ้น" value="ชิ้น" />
+          <Picker.Item label="ขวด" value="ขวด" />
+          <Picker.Item label="แพ็ค" value="แพ็ค" />
         </Picker>
 
         <DateTimeComponent value={selectedDate} />
