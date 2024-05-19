@@ -10,15 +10,18 @@ import {
   RefreshControl,
   Button,
   TextInput,
+  Alert,
 } from "react-native";
 import { auth, db } from "../firebase/firebase";
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { AntDesign } from "@expo/vector-icons";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import { useRef } from "react";
 import * as Device from "expo-device";
+// import axios from "axios";
+// import axios from "axios";
 
 export default function HomeScreen() {
   const [foodList, setFoodList] = useState([]);
@@ -69,14 +72,17 @@ export default function HomeScreen() {
         if (timeDiff === 7) {
           console.log("timeDifference = 7");
           schedulePushNotification(foodData?.NameFood, timeDiff);
+          sendLineNotification(foodData?.NameFood, timeDiff);
         }
         if (timeDiff === 3) {
           console.log("timeDifference = 3");
           schedulePushNotification(foodData?.NameFood, timeDiff);
+          sendLineNotification(foodData?.NameFood, timeDiff);
         }
         if (timeDiff <= 0) {
           console.log("timeDifference = 0");
           schedulePushNotification2(foodData?.NameFood, timeDiff);
+          sendLineNotification(foodData?.NameFood, timeDiff);
         }
       });
 
@@ -89,6 +95,25 @@ export default function HomeScreen() {
     }
     setRefreshing(false);
   }
+
+  // const sendLineNotification = async (foodName, timeDiff) => {
+  //   try {
+  //     const response = await axios({
+  //       method: "post",
+  //       url: "https://notify-api.line.me/api/notify",
+  //       headers: {
+  //         "Content-Type": "application/x-www-form-urlencoded",
+  //         Authorization: `Bearer PxPUKdQYEKHqAXTLVcZYw9Soe9GrPKYths1CrJHVNW8`,
+  //       },
+  //       data: `message=${encodeURIComponent(
+  //         foodName + ` is going to expire! in ${timeDiff} days`
+  //       )}`, // ใช้ encodeURIComponent และระบุ key ว่าเป็น 'message'
+  //     });
+  //     console.log("Notification sent", response.data);
+  //   } catch (error) {
+  //     console.error("Failed to send notification", error);
+  //   }
+  // };
 
   async function schedulePushNotification(foodName, timeDiff) {
     await Notifications.scheduleNotificationAsync({
@@ -161,6 +186,57 @@ export default function HomeScreen() {
     // ใช้ toLocaleDateString โดยระบุภาษาเป็น 'th-TH' สำหรับประเทศไทย
     return date.toLocaleDateString("th-TH", options);
   }
+  //ปุ่มลบ
+  const handleDelete = async (itemId) => {
+    const docRef = doc(
+      db,
+      "Myfridge",
+      auth.currentUser.uid,
+      "UserDetail",
+      itemId
+    );
+
+    try {
+      await updateDoc(docRef, {
+        Status: 0,
+      });
+
+      const querySnapshot = await getDocs(
+        collection(db, "Myfridge", auth.currentUser.uid, "UserDetail")
+      );
+
+      const data = querySnapshot.docs.map((item) => item.data());
+
+      const filterData = data.filter((item) => {
+        return item?.Status === 1;
+      });
+
+      console.log(filterData);
+
+      setFoodList(filterData); // อัพเดตสถานะของรายการใน state
+    } catch (error) {
+      console.log("error handleDelete, " + error);
+    }
+  };
+
+  const handleDeleteConfirmation = (itemId) => {
+    Alert.alert(
+      "ยืนยันการลบ",
+      "คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?",
+      [
+        {
+          text: "ยกเลิก",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "ยืนยัน",
+          onPress: () => handleDelete(itemId),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   useEffect(() => {
     console.log("food useEffect");
@@ -202,7 +278,11 @@ export default function HomeScreen() {
       </View>
 
       <FlatList
-        data={searchQuery ? filteredData : foodList}
+        data={
+          searchQuery
+            ? filteredData.filter((item) => item.Status === 1)
+            : foodList.filter((item) => item.Status === 1)
+        }
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={food} />
         }
@@ -252,9 +332,26 @@ export default function HomeScreen() {
                     <Text style={styles.date}>
                       วันหมดอายุ: {formatDate(item.Time_End.toDate())}
                     </Text>
-                    <Text style={styles.date}>
-                      จำนวน: {item?.Quantity} {item?.Unit}
+                    <Text
+                      style={
+                        item?.totalQuantity >= 0.25 * item?.Quantity
+                          ? styles.date
+                          : styles.date_red
+                      }
+                    >
+                      จำนวนวัดถุดิบคงเหลือ:{" "}
+                      {item?.totalQuantity
+                        ? item?.totalQuantity
+                        : item?.Quantity}{" "}
+                      {item?.Unit}
                     </Text>
+                    <MaterialCommunityIcons
+                      onPress={() => handleDeleteConfirmation(item.documentId)}
+                      style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
+                      name="delete"
+                      color="#ffff"
+                      size={26}
+                    />
                   </View>
                 </View>
               </ScrollView>
@@ -359,6 +456,10 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 18,
     color: "#ffffff",
+  },
+  date_red: {
+    fontSize: 18,
+    color: "#FF7158",
   },
   searchBar: {
     flexDirection: "row",

@@ -23,8 +23,10 @@ export default function EditScreen({ route }) {
   const [itemName, setItemName] = useState(item?.NameFood);
   const [quantity, setQuantity] = useState(item?.Quantity);
   const [image, setImage] = useState(item?.image_url);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(item?.Time_End);
   const [category, setCategory] = useState("vegetable");
+  const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity);
+  const [materials_used, setmaterials_used] = useState(item?.totalQuantity);
 
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
@@ -92,11 +94,16 @@ export default function EditScreen({ route }) {
       item?.documentId
     );
     const imageUrl = await uploadImageAsync(image);
+
+    const totalQuantity = quantity - materials_used;
+    console.log("quantity :", quantity);
+    console.log("materials_used :", materials_used);
+    console.log("totalQuantity :", totalQuantity);
     try {
       await updateDoc(docRef, {
         NameFood: itemName,
         Time_start: new Date(Date.now()),
-        Quantity: quantity,
+        totalQuantity: totalQuantity,
         Time_End: selectedDate,
         image_url: imageUrl,
         Category: category,
@@ -137,25 +144,25 @@ export default function EditScreen({ route }) {
           style={styles.picker}
           onValueChange={handleCategoryChange}
         >
-          <Picker.Item label="Vegetable 🥦" value="vegetable" />
-          <Picker.Item label="Drink 🥂" value="drink" />
-          <Picker.Item label="Fruit 🍎" value="fruit" />
-          <Picker.Item label="Meat 🥩" value="meat" />
+          <Picker.Item label="ผัก 🥦" value="ผัก" />
+          <Picker.Item label="เครื่องดื่ม 🥂" value="เครื่องดื่ม" />
+          <Picker.Item label="ผลไม้ 🍎" value="ผลไม้" />
+          <Picker.Item label="เนื้อ 🥩" value="เนื้อ" />
         </Picker>
 
         <TextInput
           style={styles.input}
-          placeholder="Item name"
+          placeholder="ชื่อวัตถุดิบ"
           value={itemName}
           onChangeText={setItemName}
         />
 
         <TextInput
           style={styles.input}
-          placeholder="Quantity"
-          value={quantity}
-          onChangeText={setQuantity}
+          placeholder="วัตถุดิบที่ใช้ไปเท่าไร"
+          onChangeText={setmaterials_used}
         />
+
         <DateTimeComponent value={selectedDate} />
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>Update item</Text>

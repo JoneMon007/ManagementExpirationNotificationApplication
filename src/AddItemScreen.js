@@ -26,6 +26,8 @@ export default function AddItemScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
   const [unit, setunit] = useState("Gram");
+  const [totalQuantity, settotalQuantity] = useState("");
+  const [status, setstatus] = useState(1);
 
   const handleunitChange = (itemValue) => {
     setunit(itemValue);
@@ -33,17 +35,17 @@ export default function AddItemScreen() {
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
 
-    if (itemValue === "meat") {
+    if (itemValue === "เนื้อ") {
       const seven = dayjs().add(7, "day").toDate();
       console.log("meat seven ", seven);
       setSelectedDate(seven);
 
       console.log("selectedDate addItemScreen", selectedDate);
-    } else if (itemValue === "vegetable") {
+    } else if (itemValue === "ผัก") {
       const fourteen = dayjs().add(14, "day").toDate();
       setSelectedDate(fourteen);
       console.log("vegetable fourteen ", fourteen);
-    } else if (itemValue === "drink") {
+    } else if (itemValue === "เครื่องดื่ม") {
       const month = dayjs().add(30, "day").toDate();
       setSelectedDate(month);
       console.log("drink month ", month);
@@ -93,10 +95,12 @@ export default function AddItemScreen() {
         NameFood: itemName,
         Category: category,
         Time_start: new Date(Date.now()),
+        totalQuantity: quantity,
         Quantity: quantity,
         Time_End: selectedDate,
         image_url: imageUrl,
         Unit: unit,
+        Status: status,
       });
 
       console.log("category :", category);
@@ -135,22 +139,22 @@ export default function AddItemScreen() {
           style={styles.picker}
           onValueChange={handleCategoryChange}
         >
-          <Picker.Item label="Vegetable 🥦" value="vegetable" />
-          <Picker.Item label="Drink 🥂" value="drink" />
-          <Picker.Item label="Fruit 🍎" value="fruit" />
-          <Picker.Item label="Meat 🥩" value="meat" />
+          <Picker.Item label="ผัก 🥦" value="ผัก" />
+          <Picker.Item label="เครื่องดื่ม 🥂" value="เครื่องดื่ม" />
+          <Picker.Item label="ผลไม้ 🍎" value="ผลไม้" />
+          <Picker.Item label="เนื้อ 🥩" value="เนื้อ" />
         </Picker>
 
         <TextInput
           style={styles.input}
-          placeholder="Item name"
+          placeholder="ชื่อวัตถุดิบ"
           value={itemName}
           onChangeText={setItemName}
         />
 
         <TextInput
           style={styles.input}
-          placeholder="Quantity"
+          placeholder="จำนวนวัตถุดิบ"
           value={quantity}
           onChangeText={setQuantity}
         />
@@ -164,9 +168,11 @@ export default function AddItemScreen() {
           <Picker.Item label="ชิ้น" value="ชิ้น" />
           <Picker.Item label="ขวด" value="ขวด" />
           <Picker.Item label="แพ็ค" value="แพ็ค" />
+          <Picker.Item label="ลูก" value="ลูก" />
         </Picker>
 
-        <DateTimeComponent value={selectedDate} />
+        <DateTimeComponent defaultValue={dayjs(selectedDate)} />
+        {/* <DateTimeComponent value={selectedDate} /> */}
 
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>Add item</Text>
