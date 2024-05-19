@@ -55,29 +55,29 @@ const RegistrationScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Fridge</Text>
+      <Text style={styles.title}>ตู้เย็นของฉัน</Text>
       <TextInput
-        placeholder="Username"
+        placeholder="ชื่อผู้ใช้งาน"
         value={username}
         onChangeText={setUsername}
         style={styles.input}
       />
       <TextInput
-        placeholder="Email"
+        placeholder="อีเมล์"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
         keyboardType="email-address"
       />
       <TextInput
-        placeholder="Password"
+        placeholder="รหัสผ่าน"
         value={password}
         onChangeText={setPassword}
         style={styles.input}
         secureTextEntry
       />
       <TouchableOpacity style={styles.button} onPress={signup}>
-        <Text style={styles.buttonText}>REGISTER</Text>
+        <Text style={styles.buttonText}>สมัครสมาชิก</Text>
       </TouchableOpacity>
       {/* <Button title="Register" onPress={signup} color="#1abc9c" /> */}
       {/* <Button

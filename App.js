@@ -58,8 +58,8 @@ export default function App() {
   return (
     <>
       {User ? (
-        // <AppNavigator />
-        <AppNav_admin />
+        <AppNavigator />
+        // <AppNav_admin />
       ) : (
         <NavigationContainer>
           <Stack.Navigator>

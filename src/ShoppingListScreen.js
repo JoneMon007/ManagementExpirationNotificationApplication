@@ -79,13 +79,13 @@ export default function ShoppingListScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Shopping List</Text>
+        <Text style={styles.title}>รายการช้อปปิ้ง</Text>
         {/* Add user icon */}
       </View>
 
       <TextInput
         style={styles.input}
-        placeholder="What do you need to buy?"
+        placeholder="คุณต้องซื้ออะไร ?"
         value={input}
         onChangeText={setInput}
       />
@@ -108,11 +108,11 @@ export default function ShoppingListScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={removeValue}>
-          <Text>Clear checked items</Text>
+          <Text>ล้างรายการ</Text>
         </TouchableOpacity>
       </View>
       <Pressable style={styles.button} onPress={() => addTodo(input)}>
-        <Text style={styles.text}>save</Text>
+        <Text style={styles.text}>บันทึก</Text>
       </Pressable>
       {/* <Button mode="contained" onPress={() => addTodo(input)}>
         save

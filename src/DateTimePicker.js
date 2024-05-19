@@ -35,7 +35,7 @@ export default function DateTimeComponent({ value }) {
     <View>
       <View>
         <Pressable style={styles.button} onPress={showDatepicker}>
-          <Text style={styles.text}>Show date picker!</Text>
+          <Text style={styles.text}>เลือกเวลาที่ต้องการแจ้งเตือน</Text>
         </Pressable>
       </View>
       {show && (

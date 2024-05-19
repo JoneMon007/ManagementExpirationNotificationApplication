@@ -12,7 +12,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { auth, db } from "../firebase/firebase";
+// import { auth, db } from "../firebase/firebase";
 import { useState, useEffect } from "react";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import { useRef } from "react";
 import * as Device from "expo-device";
+import { auth, db } from "../firebase/firebase";
 // import axios from "axios";
 // import axios from "axios";
 
@@ -72,17 +73,17 @@ export default function HomeScreen() {
         if (timeDiff === 7) {
           console.log("timeDifference = 7");
           schedulePushNotification(foodData?.NameFood, timeDiff);
-          sendLineNotification(foodData?.NameFood, timeDiff);
+          // sendLineNotification(foodData?.NameFood, timeDiff);
         }
         if (timeDiff === 3) {
           console.log("timeDifference = 3");
           schedulePushNotification(foodData?.NameFood, timeDiff);
-          sendLineNotification(foodData?.NameFood, timeDiff);
+          // sendLineNotification(foodData?.NameFood, timeDiff);
         }
         if (timeDiff <= 0) {
           console.log("timeDifference = 0");
           schedulePushNotification2(foodData?.NameFood, timeDiff);
-          sendLineNotification(foodData?.NameFood, timeDiff);
+          // sendLineNotification(foodData?.NameFood, timeDiff);
         }
       });
 

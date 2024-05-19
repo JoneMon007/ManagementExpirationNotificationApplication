@@ -120,7 +120,7 @@ export default function AddItemScreen() {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Add an item</Text>
+          <Text style={styles.title}>เพิ่มวัตถุดิบ</Text>
         </View>
 
         <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
@@ -130,7 +130,7 @@ export default function AddItemScreen() {
               style={{ width: 100, height: 100 }}
             />
           ) : (
-            <Text>Add Photo</Text>
+            <Text>เพิ่มรูปวัตถุดิบ</Text>
           )}
         </TouchableOpacity>
 
@@ -169,13 +169,14 @@ export default function AddItemScreen() {
           <Picker.Item label="ขวด" value="ขวด" />
           <Picker.Item label="แพ็ค" value="แพ็ค" />
           <Picker.Item label="ลูก" value="ลูก" />
+          <Picker.Item label="ตัว" value="ตัว" />
         </Picker>
 
         <DateTimeComponent defaultValue={dayjs(selectedDate)} />
         {/* <DateTimeComponent value={selectedDate} /> */}
 
         <Pressable style={styles.button} onPress={addItem}>
-          <Text style={styles.text}>Add item</Text>
+          <Text style={styles.text}>เพิ่มวัตถุดิบ !</Text>
         </Pressable>
 
         {/* <Button

@@ -1,11 +1,13 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+// import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
-import { auth } from "../../firebase/firebase";
+// import { auth } from "../../firebase/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -30,27 +32,27 @@ export default function Login() {
     <View style={styles.container}>
       <Input
         style={styles.title}
-        placeholder="Email"
+        placeholder="  อีเมล"
         leftIcon={{ type: "font-awesome", name: "user" }}
         onChangeText={(value) => setEmail(value)}
         value={email}
       />
       <Input
         style={styles.title}
-        placeholder="Password"
+        placeholder="  รหัสผ่าน"
         secureTextEntry={true}
         leftIcon={{ type: "font-awesome", name: "lock" }}
         onChangeText={(value) => setPassword(value)}
         value={password}
       />
       <TouchableOpacity style={styles.button} onPress={signin}>
-        <Text style={styles.buttonText}>LOGIN</Text>
+        <Text style={styles.buttonText}>เข้าสู่ระบบ</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Register")}
       >
-        <Text style={styles.buttonText}>REGISTER</Text>
+        <Text style={styles.buttonText}>ลงทะเบียน</Text>
       </TouchableOpacity>
 
       {/* <Button title="Login" onPress={signin} />

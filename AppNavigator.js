@@ -61,7 +61,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.header}>
-        <Text style={styles.title}>My freidge</Text>
+        <Text style={styles.title}>ตู้เย็นของฉัน</Text>
         {/* <MaterialCommunityIcons
           name="logout"
           color={"#f0edf6"}
