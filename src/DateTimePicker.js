@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Button, Platform, StyleSheet, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Text } from "react-native-elements";
+// import dayjs from 'day.js';
 
 export default function DateTimeComponent({ value }) {
   const [date, setDate] = useState(new Date());
@@ -10,8 +11,19 @@ export default function DateTimeComponent({ value }) {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+    // const date = dayjs.unix(parseInt(value));
+    // const readableDate = date.format("MM/DD/YYYY");
+    // const unixTimestamp = parseInt(value, 10); // Convert string to number
+    // const dateObject = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds and create a Date object
+
     console.log("currentDate datepicker component ", currentDate);
-    console.log("value datepicker component ", value);
+    console.log(
+      "value datepicker component "
+      // dateObject
+      // value
+      // new Date(value).toLocaleString("en-GB", { timeZone: "UTC" })
+    );
+    // console.log("value datepicker component ", value.toDate());
 
     setShow(Platform.OS === "ios");
 

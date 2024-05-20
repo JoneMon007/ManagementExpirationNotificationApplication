@@ -172,6 +172,11 @@ export default function AddItemScreen() {
           <Picker.Item label="ตัว" value="ตัว" />
         </Picker>
 
+        {/* <DateTimeComponent
+          label="Controlled picker"
+          value={selectedDate}
+          onChange={(selectedDate) => setValue(setSelectedDate)}
+        /> */}
         <DateTimeComponent defaultValue={dayjs(selectedDate)} />
         {/* <DateTimeComponent value={selectedDate} /> */}
 

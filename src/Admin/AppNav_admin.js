@@ -4,7 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 // import LoginScreen from './login';
-import HomeScreen from "../HomeScreen";
 import ShoppingListScreen from "../ShoppingListScreen";
 import AddItemScreen from "../AddItemScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -14,10 +13,12 @@ import Register from "../login/Register";
 import { signOut } from "firebase/auth";
 import Profile from "../Profile";
 import { auth } from "../../firebase/firebase";
+import ManageUsers from "./ManageUsers";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 function StackNavigator() {
   useEffect(() => {
@@ -25,10 +26,10 @@ function StackNavigator() {
   }, []);
 
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName="ManageUsers">
       <Stack.Screen
-        name="Home"
-        component={HomeScreen}
+        name="ManageUsers"
+        component={ManageUsers}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -61,6 +62,10 @@ export default function AppNav_admin() {
 
   return (
     <NavigationContainer>
+      <Drawer.Navigator>
+        <Drawer.Screen name="Home" component={ManageUsers} />
+        {/* <Drawer.Screen name="Settings" component={SettingsScreen} /> */}
+      </Drawer.Navigator>
       <View style={styles.header}>
         <Text style={styles.title}>My freidge</Text>
         {/* <MaterialCommunityIcons
@@ -71,16 +76,16 @@ export default function AppNav_admin() {
         /> */}
       </View>
       <Tab.Navigator
-        initialRouteName="HomeTab"
+        initialRouteName="ManageUsers"
         barStyle={{ backgroundColor: "#ffff" }}
         activeColor="#000000"
         inactiveColor="#5db075"
       >
         <Tab.Screen
-          name="HomeTab"
+          name="ManageUsers"
           component={StackNavigator}
           options={{
-            tabBarLabel: "โฮม",
+            tabBarLabel: "ManageUsers",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),

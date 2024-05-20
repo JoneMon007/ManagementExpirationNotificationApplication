@@ -25,8 +25,8 @@ export default function EditScreen({ route }) {
   const [image, setImage] = useState(item?.image_url);
   const [selectedDate, setSelectedDate] = useState(item?.Time_End);
   const [category, setCategory] = useState("vegetable");
-  const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity);
-  const [materials_used, setmaterials_used] = useState(item?.totalQuantity);
+  const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity || 0);
+  const [materials_used, setmaterials_used] = useState(0);
 
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
@@ -51,8 +51,6 @@ export default function EditScreen({ route }) {
       console.log("Fruit fourteen ", fourteen);
     }
   };
-
-  console.log("item==>", item, "doc==>", documentId);
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
@@ -95,15 +93,18 @@ export default function EditScreen({ route }) {
     );
     const imageUrl = await uploadImageAsync(image);
 
-    const totalQuantity = quantity - materials_used;
-    console.log("quantity :", quantity);
-    console.log("materials_used :", materials_used);
-    console.log("totalQuantity :", totalQuantity);
+    const values = Math.max(0, totalQuantity - materials_used);
+    // console.log("typeof totalQuantity", typeof totalQuantity);
+    // console.log("typeof materials_used", typeof materials_used);
+    // console.log("quantity :", quantity);
+    // console.log("totalQuantity :", totalQuantity);
+    // console.log("materials_used :", materials_used);
+    // console.log("values :", values);
     try {
       await updateDoc(docRef, {
         NameFood: itemName,
         Time_start: new Date(Date.now()),
-        totalQuantity: totalQuantity,
+        totalQuantity: values,
         Time_End: selectedDate,
         image_url: imageUrl,
         Category: category,

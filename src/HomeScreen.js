@@ -341,7 +341,7 @@ export default function HomeScreen() {
                       }
                     >
                       จำนวนวัดถุดิบคงเหลือ:{" "}
-                      {item?.totalQuantity
+                      {item?.totalQuantity || item?.totalQuantity === 0
                         ? item?.totalQuantity
                         : item?.Quantity}{" "}
                       {item?.Unit}
