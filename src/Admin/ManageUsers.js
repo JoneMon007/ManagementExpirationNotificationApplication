@@ -15,18 +15,23 @@ import { TextInput } from "react-native-paper";
 import { auth, db } from "../../firebase/firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
 
 const ManageUsers = () => {
   const [userData, setUserData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [documentId, setDocumentId] = useState([]);
+  const navigation = useNavigation(); // ใช้ hook useNavigation
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Myfridge"));
         const users = querySnapshot.docs.map((doc) => doc.data());
+        const id = querySnapshot.docs.map((item) => item.id);
         console.log(users); // Log the data fetched from firestore
         setUserData(users); // Set the data to state
+        setDocumentId(id);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -34,10 +39,6 @@ const ManageUsers = () => {
 
     fetchUserData();
   }, []);
-  //   const handleDelete = (userId) => {
-  //     // Placeholder for delete logic
-  //     setUserData(currentData => currentData.filter(user => user.id !== userId));
-  //   };
 
   const filteredData = searchQuery
     ? userData.filter((user) => user.username.includes(searchQuery))
@@ -60,67 +61,43 @@ const ManageUsers = () => {
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
-        // data={
-        //   searchQuery
-        //     ? filteredData.filter((item) => item.Status === 1)
-        //     : foodList.filter((item) => item.Status === 1)
-        // }
         renderItem={({ item }) => {
           return (
             //อันที่2
-            <ScrollView>
-              <View style={styles.itemContainer_green}>
-                <Image
-                  source={{
-                    uri: userData?.image_url
-                      ? userData?.image_url
-                      : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-                  }}
-                  style={styles.image}
-                />
-                <View style={styles.detailsContainer}>
-                  <Text style={styles.date}>ID : {item?.id}</Text>
-                  <Text style={styles.date}>Username : {item?.username}</Text>
-                  <Text style={styles.date}>Email : {item?.email}</Text>
-                  <MaterialCommunityIcons
-                    onPress={() => handleDeleteConfirmation(item.documentId)}
-                    style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
-                    name="delete"
-                    color="#ffff"
-                    size={26}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("UsersEdit", { item, documentId })
+              }
+            >
+              <ScrollView>
+                <View style={styles.itemContainer_green}>
+                  <Image
+                    source={{
+                      uri: userData?.image_url
+                        ? userData?.image_url
+                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                    }}
+                    style={styles.image}
                   />
+                  <View style={styles.detailsContainer}>
+                    <Text style={styles.date}>ID : {item?.id}</Text>
+                    <Text style={styles.date}>Username : {item?.username}</Text>
+                    <Text style={styles.date}>Email : {item?.email}</Text>
+                    <MaterialCommunityIcons
+                      onPress={() => handleDeleteConfirmation(item.documentId)}
+                      style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
+                      name="delete"
+                      color="#ffff"
+                      size={26}
+                    />
+                  </View>
                 </View>
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </TouchableOpacity>
           );
         }}
       />
     </>
-    // <ScrollView>
-    //   <View style={styles.itemContainer_green}>
-    //     <Image
-    //       source={{
-    //         uri: userData?.image_url
-    //           ? userData?.image_url
-    //           : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    //       }}
-    //       style={styles.image}
-    //     />
-    //     <View style={styles.detailsContainer}>
-    //       <Text style={styles.date}>{userData?.id}</Text>
-    //       <Text style={styles.date}>{userData?.username}</Text>
-    //       <Text style={styles.date}>{userData?.email}</Text>
-    //       <MaterialCommunityIcons
-    //         onPress={() => handleDeleteConfirmation(item.documentId)}
-    //         style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
-    //         name="delete"
-    //         color="#ffff"
-    //         size={26}
-    //       />
-    //     </View>
-    //   </View>
-    // </ScrollView>
-    // // </TouchableOpacity>
   );
 };
 

@@ -15,6 +15,7 @@ import Profile from "../Profile";
 import { auth } from "../../firebase/firebase";
 import HomeScreen from "../HomeScreen";
 import ManageUsers from "./ManageUsers";
+import UsersEdit from "./UsersEdit";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
@@ -44,7 +45,8 @@ function StackNavigator() {
       />
       <Stack.Screen name="EditScreen" component={EditScreen} />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Profile" component={ManageUsers} />
+      <Stack.Screen name="ManageUsers" component={ManageUsers} />
+      <Stack.Screen name="UsersEdit" component={UsersEdit} />
     </Stack.Navigator>
   );
 }
@@ -72,7 +74,7 @@ export default function AppNav_admin() {
         /> */}
       </View>
       <Tab.Navigator
-        initialRouteName="HomeScreen"
+        initialRouteName="Home"
         barStyle={{ backgroundColor: "#ffff" }}
         activeColor="#000000"
         inactiveColor="#5db075"

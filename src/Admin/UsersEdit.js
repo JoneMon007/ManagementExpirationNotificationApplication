@@ -8,52 +8,43 @@ import {
   Button,
   Image,
   Pressable,
+  ScrollView,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
-import DateTimeComponent from "./DateTimePicker";
-import { uploadImageAsync } from "./uploadImageAsync";
-import { ScrollView } from "react-native-gesture-handler";
-import dayjs from "dayjs";
+import { auth, db } from "../../firebase/firebase";
+import { uploadImageAsync } from "../uploadImageAsync";
 
-export default function EditScreen({ route }) {
+export default function UsersEdit({ route }) {
   const { item, documentId } = route.params;
-  const [itemName, setItemName] = useState(item?.NameFood);
-  const [quantity, setQuantity] = useState(item?.Quantity);
+  const [Username, setusername] = useState(item?.username);
+  const [email, setEmail] = useState(item?.email);
+  const [linetoken, setLineToken] = useState(item?.LineToken);
+  const [role, setRole] = useState(item?.Role);
   const [image, setImage] = useState(item?.image_url);
-  const [selectedDate, setSelectedDate] = useState(item?.Time_End);
-  const [category, setCategory] = useState(item?.Category);
-  const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity || 0);
-  const [materials_used, setmaterials_used] = useState(0);
 
-  const handleCategoryChange = (itemValue) => {
-    setCategory(itemValue);
-
-    if (itemValue === "meat") {
-      const seven = dayjs().add(7, "day").toDate();
-      console.log("meat seven ", seven);
-      setSelectedDate(seven);
-
-      console.log("selectedDate addItemScreen", selectedDate);
-    } else if (itemValue === "vegetable") {
-      const fourteen = dayjs().add(14, "day").toDate();
-      setSelectedDate(fourteen);
-      console.log("vegetable fourteen ", fourteen);
-    } else if (itemValue === "drink") {
-      const month = dayjs().add(30, "day").toDate();
-      setSelectedDate(month);
-      console.log("drink month ", month);
-    } else {
-      const fourteen = dayjs().add(14, "day").toDate();
-      setSelectedDate(fourteen);
-      console.log("Fruit fourteen ", fourteen);
-    }
+  const handleConfirmationRole = (itemValue) => {
+    Alert.alert(
+      "Confirm change",
+      "Are you sure you want to change this data ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Confirm",
+          onPress: () => handleunitChange(itemValue),
+        },
+      ],
+      { cancelable: false }
+    );
   };
-
-  const handleDateChange = (newDate) => {
-    setSelectedDate(newDate);
+  const handleunitChange = (itemValue) => {
+    setRole(itemValue);
   };
 
   const requestPermission = async () => {
@@ -82,32 +73,14 @@ export default function EditScreen({ route }) {
   };
 
   async function addItem() {
-    const currentDate = new Date(); // สร้างวันที่ปัจจุบัน
-    currentDate.setDate(currentDate.getDate() + 1); // เพิ่มวันที่ปัจจุบันด้วย 1
-    const docRef = doc(
-      db,
-      "Myfridge",
-      auth.currentUser.uid,
-      "UserDetail",
-      item?.documentId
-    );
+    const docRef = doc(db, "Myfridge", auth.currentUser.uid);
     const imageUrl = await uploadImageAsync(image);
 
-    const values = Math.max(0, totalQuantity - materials_used);
-    // console.log("typeof totalQuantity", typeof totalQuantity);
-    // console.log("typeof materials_used", typeof materials_used);
-    // console.log("quantity :", quantity);
-    // console.log("totalQuantity :", totalQuantity);
-    // console.log("materials_used :", materials_used);
-    // console.log("values :", values);
     try {
       await updateDoc(docRef, {
-        NameFood: itemName,
-        Time_start: new Date(Date.now()),
-        totalQuantity: values,
-        Time_End: selectedDate,
+        username: itemusername,
+        Time_End: setEmail,
         image_url: imageUrl,
-        Category: category,
       });
       console.log("Document updated successfully");
     } catch (error) {
@@ -141,32 +114,31 @@ export default function EditScreen({ route }) {
         </TouchableOpacity>
 
         <Picker
-          selectedValue={category}
+          selectedValue={role}
           style={styles.picker}
-          onValueChange={handleCategoryChange}
+          onValueChange={handleConfirmationRole}
         >
-          <Picker.Item label="ผัก 🥦" value="ผัก" />
-          <Picker.Item label="เครื่องดื่ม 🥂" value="เครื่องดื่ม" />
-          <Picker.Item label="ผลไม้ 🍎" value="ผลไม้" />
-          <Picker.Item label="เนื้อ 🥩" value="เนื้อ" />
+          <Picker.Item label="User" value="User" />
+          <Picker.Item label="Admin" value="Admin" />
         </Picker>
 
+        <TextInput style={styles.input} value={item.id} editable={false} />
         <TextInput
           style={styles.input}
-          placeholder="ชื่อวัตถุดิบ"
-          value={itemName}
-          onChangeText={setItemName}
+          placeholder="Username"
+          value={Username}
+          onChangeText={setusername}
         />
-
         <TextInput
           style={styles.input}
-          placeholder="วัตถุดิบที่ใช้ไปเท่าไร"
-          onChangeText={setmaterials_used}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
         />
+        <TextInput style={styles.input} value={linetoken} editable={false} />
 
-        <DateTimeComponent value={selectedDate} />
         <Pressable style={styles.button} onPress={addItem}>
-          <Text style={styles.text}>Update item</Text>
+          <Text style={styles.text}>Update User</Text>
         </Pressable>
         {/* <Button
         title="Add item"

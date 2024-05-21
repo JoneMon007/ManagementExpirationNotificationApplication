@@ -5,6 +5,7 @@ import AppNavigator from "./AppNavigator";
 import { auth, db } from "./firebase/firebase";
 import Navigatir_login from "./src/login/Navigatir_login";
 import AppNav_admin from "./src/Admin/AppNav_admin";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   const [User, setUser] = useState(false);
@@ -58,7 +59,9 @@ export default function App() {
     <>
       {User ? (
         isAdmin ? (
-          <AppNav_admin />
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <AppNav_admin />
+          </GestureHandlerRootView>
         ) : (
           <AppNavigator />
         )

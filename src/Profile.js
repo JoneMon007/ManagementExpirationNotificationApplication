@@ -6,28 +6,22 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  TouchableOpacity,
   Linking,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  doc,
-  documentId,
-  getDoc,
-  getDocs,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import * as ImagePicker from "expo-image-picker";
 import { TextInput } from "react-native-paper";
+import { uploadImageAsync } from "./uploadImageAsync";
 
 const Profile = () => {
   const [userData, setUser] = useState([]);
   const [profilePicture, setProfilePicture] = useState(null);
   const [linetoken, setLineToken] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,7 +30,10 @@ const Profile = () => {
 
       if (userDocSnap.exists()) {
         console.log("Main user document data:", userDocSnap.data());
+
         setUser(userDocSnap.data());
+        setImage(userData?.image_url);
+        console.log("image  : " + image);
       } else {
         console.log("No such user document!");
       }
@@ -47,19 +44,6 @@ const Profile = () => {
     // setFoodData();
     console.log(auth.currentUser.uid);
   }, []);
-
-  const handleImageSelect = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    if (!result.cancelled) {
-      setProfilePicture(result.uri);
-    }
-  };
-
   const logOut = () => {
     signOut(auth)
       .then(() => {
@@ -69,18 +53,40 @@ const Profile = () => {
         console.log("logout error", error);
       });
   };
-  // const openPDF = () => {
-  //   // Here you would implement the method to open the PDF.
-  //   // This is a placeholder function. You would need to use
-  //   // react-native-pdf or another library to actually open the PDF.
-  // };
+  const requestPermission = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return false;
+    }
+    return true;
+  };
+
+  const pickImage = async () => {
+    const hasPermission = await requestPermission();
+    if (!hasPermission) return;
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.assets[0].uri);
+      console.log(result.assets[0].uri);
+    }
+  };
+  async function handleUploadImage(uri) {
+    await saveImageInfoToFirestore(imageUrl);
+  }
 
   async function addItem() {
     const tokensCollectionRef = doc(db, "Myfridge", auth.currentUser.uid);
-    // const userDocRef = doc(db, "Myfridge", auth.currentUser.uid);
-    // const tokensCollectionRef = collection(userDocRef,"Tokens");
+    const imageUrl = await uploadImageAsync(image);
     try {
       await updateDoc(tokensCollectionRef, {
+        image_url: imageUrl,
         LineToken: linetoken,
       });
 
@@ -96,18 +102,32 @@ const Profile = () => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.profilePictureContainer}>
-          <Image
+          <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+            {image ? (
+              <Image
+                source={{
+                  uri:
+                    image ||
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                }}
+                style={styles.profilePicture}
+              />
+            ) : (
+              <Text>เพิ่มรูปโปรไฟล์</Text>
+            )}
+          </TouchableOpacity>
+          {/* <Image
             source={{
               uri:
                 profilePicture ||
                 "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
             }}
             style={styles.profilePicture}
-          />
+          /> */}
         </View>
         <View>
-          <Text style={styles.name}>{userData?.username}</Text>
-          <Text style={styles.email}>{userData?.email}</Text>
+          <Text style={styles.name}>Username : {userData?.username}</Text>
+          <Text style={styles.email}>Email : {userData?.email}</Text>
           <Text style={styles.email}></Text>
           <TextInput
             style={styles.input}
