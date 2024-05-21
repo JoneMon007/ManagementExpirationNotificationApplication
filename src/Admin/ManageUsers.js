@@ -73,8 +73,8 @@ const ManageUsers = () => {
                 <View style={styles.itemContainer_green}>
                   <Image
                     source={{
-                      uri: userData?.image_url
-                        ? userData?.image_url
+                      uri: item?.image_url
+                        ? item?.image_url
                         : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
                     }}
                     style={styles.image}
