@@ -8,21 +8,17 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
-  Button,
   TextInput,
   Alert,
 } from "react-native";
-// import { auth, db } from "../firebase/firebase";
 import { useState, useEffect } from "react";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import { useRef } from "react";
 import * as Device from "expo-device";
 import { auth, db } from "../firebase/firebase";
-// import axios from "axios";
-// import axios from "axios";
 
 export default function HomeScreen() {
   const [foodList, setFoodList] = useState([]);

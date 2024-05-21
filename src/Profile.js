@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  Linking,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";

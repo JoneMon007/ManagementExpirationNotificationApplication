@@ -13,12 +13,12 @@ import Register from "../login/Register";
 import { signOut } from "firebase/auth";
 import Profile from "../Profile";
 import { auth } from "../../firebase/firebase";
+import HomeScreen from "../HomeScreen";
 import ManageUsers from "./ManageUsers";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
-const Drawer = createDrawerNavigator();
 
 function StackNavigator() {
   useEffect(() => {
@@ -26,10 +26,10 @@ function StackNavigator() {
   }, []);
 
   return (
-    <Stack.Navigator initialRouteName="ManageUsers">
+    <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen
-        name="ManageUsers"
-        component={ManageUsers}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -44,7 +44,7 @@ function StackNavigator() {
       />
       <Stack.Screen name="EditScreen" component={EditScreen} />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="Profile" component={ManageUsers} />
     </Stack.Navigator>
   );
 }
@@ -62,10 +62,6 @@ export default function AppNav_admin() {
 
   return (
     <NavigationContainer>
-      <Drawer.Navigator>
-        <Drawer.Screen name="Home" component={ManageUsers} />
-        {/* <Drawer.Screen name="Settings" component={SettingsScreen} /> */}
-      </Drawer.Navigator>
       <View style={styles.header}>
         <Text style={styles.title}>My freidge</Text>
         {/* <MaterialCommunityIcons
@@ -76,16 +72,16 @@ export default function AppNav_admin() {
         /> */}
       </View>
       <Tab.Navigator
-        initialRouteName="ManageUsers"
+        initialRouteName="HomeScreen"
         barStyle={{ backgroundColor: "#ffff" }}
         activeColor="#000000"
         inactiveColor="#5db075"
       >
         <Tab.Screen
-          name="ManageUsers"
+          name="HomeScreen"
           component={StackNavigator}
           options={{
-            tabBarLabel: "ManageUsers",
+            tabBarLabel: "หน้าหลัก",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
@@ -121,6 +117,16 @@ export default function AppNav_admin() {
           component={Profile}
           options={{
             tabBarLabel: "โปรไฟล์",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="ManageUsers"
+          component={ManageUsers}
+          options={{
+            tabBarLabel: "ManageUsers",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="account" color={color} size={26} />
             ),
