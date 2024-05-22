@@ -9,6 +9,8 @@ const RegistrationScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [role, setRole] = useState("User");
 
   const addUser = async () => {
     try {
@@ -24,6 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
           email: email,
           username: username,
           password: password,
+          Role: role,
         });
         // updateID();
         console.log("add user success");
@@ -33,8 +36,17 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
+  const validateInput = () => {
+    if (!email || !password || !username) {
+      Alert.alert("ผิดพลาด", "กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      return false;
+    }
+    return true;
+  };
+
   const signup = () => {
-    createUserWithEmailAndPassword(auth, email, password)
+    if (!validateInput()) return;
+    createUserWithEmailAndPassword(auth, email, password, role)
       .then(async (userCredential) => {
         const user = userCredential.user;
         console.log("signup success firebase", user.uid);
@@ -42,14 +54,12 @@ const RegistrationScreen = ({ navigation }) => {
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
-          setFirebaseError("อีเมลนี้มีผู้ใช้งานแล้ว");
+          Alert.alert("ผิดพลาด", "อีเมลนี้ได้ถูกใช้งานแล้ว");
         } else if (error.code === "auth/invalid-email") {
-          setFirebaseError("กรุณากรอกอีเมลให้ถูกต้อง");
+          Alert.alert("ผิดพลาด", "อีเมลไม่ถูกต้อง");
+        } else {
+          Alert.alert("ผิดพลาด", error.message);
         }
-
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("signup error", errorCode, errorMessage);
       });
   };
 

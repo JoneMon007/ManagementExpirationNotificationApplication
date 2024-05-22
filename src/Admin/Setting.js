@@ -53,12 +53,6 @@ const Setting = () => {
   }, []);
 
   async function addItem() {
-    // const tokensCollectionRef = doc(
-    //   db,
-    //   "Notification",
-    //   "NotificationDetail",
-    //   "NotificationDetail_1"
-    // );
     const tokensCollectionRef = doc(db, "Notification", auth.currentUser.uid);
     // const tokensCollectionRef = doc(db, "Notification", "NotificationDetail");
     try {
@@ -69,11 +63,18 @@ const Setting = () => {
         Notification_2: notification_2,
         Notification_3: notification_3,
       });
-
-      console.log("LineToken :", linetoken);
     } catch (error) {
       console.log(error);
     }
+    console.log(
+      "Update success :" + notification_1,
+      notification_2,
+      notification_3
+    );
+    alert("Update success");
+    setNotification_1("");
+    setNotification_2("");
+    setNotification_3("");
   }
 
   return (

@@ -131,7 +131,11 @@ export default function AppNav_admin() {
           options={{
             tabBarLabel: "ManageUsers",
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="account" color={color} size={26} />
+              <MaterialCommunityIcons
+                name="account-multiple"
+                color={color}
+                size={26}
+              />
             ),
           }}
         />
@@ -141,7 +145,7 @@ export default function AppNav_admin() {
           options={{
             tabBarLabel: "setting",
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="account" color={color} size={26} />
+              <MaterialCommunityIcons name="alarm" color={color} size={26} />
             ),
           }}
         />

@@ -1,28 +1,40 @@
 // import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Input, Button, Text } from "react-native-elements";
-// import { auth } from "../../firebase/firebase";
+import { Input, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { AntDesign } from "@expo/vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigation = useNavigation();
 
   const signin = () => {
+    if (!email || !password) {
+      setErrorMessage("กรุณาใส่อีเมลและรหัสผ่านให้ครบถ้วน");
+      return;
+    }
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         console.log("signin firebase success", user.email, user.uid);
+        setErrorMessage(""); // Clear any previous errors
       })
       .catch((error) => {
         const errorCode = error.code;
+        if (
+          errorCode === "auth/wrong-password" ||
+          errorCode === "auth/user-not-found"
+        ) {
+          setErrorMessage("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+        } else {
+          setErrorMessage("เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+        }
         const errorMessage = error.message;
         console.log("signin firebase error", errorCode, errorMessage);
       });
@@ -45,6 +57,7 @@ export default function Login() {
         onChangeText={(value) => setPassword(value)}
         value={password}
       />
+      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       <TouchableOpacity style={styles.button} onPress={signin}>
         <Text style={styles.buttonText}>เข้าสู่ระบบ</Text>
       </TouchableOpacity>
@@ -54,12 +67,6 @@ export default function Login() {
       >
         <Text style={styles.buttonText}>ลงทะเบียน</Text>
       </TouchableOpacity>
-
-      {/* <Button title="Login" onPress={signin} />
-      <Button
-        title="Register"
-        onPress={() => navigation.navigate("Register")}
-      /> */}
     </View>
   );
 }
@@ -115,5 +122,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     borderRadius: 10,
     lineHeight: "100px",
+  },
+  error: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
   },
 });

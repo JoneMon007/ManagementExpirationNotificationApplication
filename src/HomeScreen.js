@@ -32,7 +32,6 @@ export default function HomeScreen() {
   const [Numnotification, setnumNotification] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation(); // ใช้ hook useNavigation
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -105,30 +104,11 @@ export default function HomeScreen() {
     setRefreshing(false);
   }
 
-  // const sendLineNotification = async (foodName, timeDiff) => {
-  //   try {
-  //     const response = await axios({
-  //       method: "post",
-  //       url: "https://notify-api.line.me/api/notify",
-  //       headers: {
-  //         "Content-Type": "application/x-www-form-urlencoded",
-  //         Authorization: `Bearer PxPUKdQYEKHqAXTLVcZYw9Soe9GrPKYths1CrJHVNW8`,
-  //       },
-  //       data: `message=${encodeURIComponent(
-  //         foodName + ` is going to expire! in ${timeDiff} days`
-  //       )}`, // ใช้ encodeURIComponent และระบุ key ว่าเป็น 'message'
-  //     });
-  //     console.log("Notification sent", response.data);
-  //   } catch (error) {
-  //     console.error("Failed to send notification", error);
-  //   }
-  // };
-
   async function schedulePushNotification(foodName, timeDiff) {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: foodName + ` is going to expired! in ${timeDiff} day 📬`,
-        body: foodName + ` is going to expired! in ${timeDiff} day`,
+        title: foodName + ` ของท่านใกล้หมดอายูภายในอีก ${timeDiff} วัน 📬`,
+        body: foodName + ` ของท่านใกล้หมดอายูภายในอีก ${timeDiff} วัน`,
         data: { data: "MyFridge" },
       },
       trigger: { seconds: 2 },
@@ -139,8 +119,8 @@ export default function HomeScreen() {
   async function schedulePushNotification2(foodName) {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: foodName + ` is expired! 📬`,
-        body: foodName + ` is expired! `,
+        title: foodName + ` ของท่านหมดอายุแล้ว  📬`,
+        body: foodName + ` ของท่านหมดอายุแล้ว!! `,
         data: { data: "MyFridge" },
       },
       trigger: { seconds: 2 },
@@ -266,29 +246,6 @@ export default function HomeScreen() {
     console.log("food useEffect");
     food();
     fetchUserData();
-  }, []);
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
   }, []);
 
   return (

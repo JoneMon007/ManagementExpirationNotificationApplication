@@ -122,13 +122,6 @@ export default function EditScreen({ route }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Add an item</Text>
-          <TouchableOpacity style={styles.closeButton}>
-            <Text>X</Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
           {image ? (
             <Image
@@ -166,7 +159,7 @@ export default function EditScreen({ route }) {
 
         <DateTimeComponent value={selectedDate} />
         <Pressable style={styles.button} onPress={addItem}>
-          <Text style={styles.text}>Update item</Text>
+          <Text style={styles.text}>ตกลง</Text>
         </Pressable>
         {/* <Button
         title="Add item"

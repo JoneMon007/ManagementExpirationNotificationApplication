@@ -86,6 +86,10 @@ export default function AddItemScreen() {
   }
 
   async function addItem() {
+    if (!itemName || !quantity || !category || !image || !selectedDate) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
     const userRef = doc(db, "Myfridge", auth.currentUser.uid);
     const postRef = collection(userRef, "UserDetail");
     const imageUrl = await uploadImageAsync(image);
@@ -111,6 +115,7 @@ export default function AddItemScreen() {
     } catch (error) {
       console.log(error);
     }
+    alert("Update success");
     setItemName("");
     setQuantity("");
     setImage(null);
@@ -171,24 +176,12 @@ export default function AddItemScreen() {
           <Picker.Item label="ลูก" value="ลูก" />
           <Picker.Item label="ตัว" value="ตัว" />
         </Picker>
-
-        {/* <DateTimeComponent
-          label="Controlled picker"
-          value={selectedDate}
-          onChange={(selectedDate) => setValue(setSelectedDate)}
-        /> */}
         <DateTimeComponent defaultValue={dayjs(selectedDate)} />
         {/* <DateTimeComponent value={selectedDate} /> */}
 
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>เพิ่มวัตถุดิบ !</Text>
         </Pressable>
-
-        {/* <Button
-        title="Add item"
-        onPress={() => console.log(selectedDate + "AddItemScreen")}
-      /> */}
-        {/* <Button style={styles.button} title="Cancel" onPress={() => {}} /> */}
       </View>
     </ScrollView>
   );
