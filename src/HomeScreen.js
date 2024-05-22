@@ -12,7 +12,13 @@ import {
   Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
@@ -23,6 +29,7 @@ import { auth, db } from "../firebase/firebase";
 export default function HomeScreen() {
   const [foodList, setFoodList] = useState([]);
   const [documentId, setDocumentId] = useState([]);
+  const [Numnotification, setnumNotification] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation(); // ใช้ hook useNavigation
   const [expoPushToken, setExpoPushToken] = useState("");
@@ -66,13 +73,18 @@ export default function HomeScreen() {
         const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         console.log("timeDiff ", timeDiff);
 
-        if (timeDiff === 7) {
-          console.log("timeDifference = 7");
+        if (timeDiff === Numnotification?.Notification_1) {
+          console.log("timeDifference = " + Numnotification?.Notification_1);
           schedulePushNotification(foodData?.NameFood, timeDiff);
           // sendLineNotification(foodData?.NameFood, timeDiff);
         }
-        if (timeDiff === 3) {
-          console.log("timeDifference = 3");
+        if (timeDiff === Numnotification?.Notification_2) {
+          console.log("timeDifference = " + Numnotification?.Notification_2);
+          schedulePushNotification(foodData?.NameFood, timeDiff);
+          // sendLineNotification(foodData?.NameFood, timeDiff);
+        }
+        if (timeDiff === Numnotification?.Notification_3) {
+          console.log("timeDifference = " + Numnotification?.Notification_3);
           schedulePushNotification(foodData?.NameFood, timeDiff);
           // sendLineNotification(foodData?.NameFood, timeDiff);
         }
@@ -236,8 +248,24 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const userDocRef = doc(
+        db,
+        "Notification",
+        "s0VWfSTXvhQTjgwjj9cPzOYVTPR2"
+      );
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        // console.log("Main user document data:", userDocSnap.data());
+        setnumNotification(userDocSnap.data());
+      } else {
+        console.log("No such user document!");
+      }
+    };
     console.log("food useEffect");
     food();
+    fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -293,8 +321,6 @@ export default function HomeScreen() {
           const currentDate = new Date();
           const timeDifference = expiryDate - currentDate;
           const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-          const backgroundColor = isConnected ? "green" : "red";
-
           return (
             //อันที่2
             <TouchableOpacity

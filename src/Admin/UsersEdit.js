@@ -87,10 +87,8 @@ export default function UsersEdit({ route }) {
       console.log(error);
       console.error("Error updating document: ", error);
     }
-    setItemName("");
-    setQuantity("");
+    setusername("");
     setImage(null);
-    setSelectedDate(new Date());
   }
   return (
     <ScrollView>
@@ -173,10 +171,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
-    // marginVertical: 10,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#ccc",
-    // padding: 10,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,

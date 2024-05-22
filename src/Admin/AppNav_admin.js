@@ -16,6 +16,7 @@ import { auth } from "../../firebase/firebase";
 import HomeScreen from "../HomeScreen";
 import ManageUsers from "./ManageUsers";
 import UsersEdit from "./UsersEdit";
+import Setting from "./Setting";
 // Import other screens as needed
 
 const Stack = createStackNavigator();
@@ -129,6 +130,16 @@ export default function AppNav_admin() {
           component={ManageUsers}
           options={{
             tabBarLabel: "ManageUsers",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="setting"
+          component={Setting}
+          options={{
+            tabBarLabel: "setting",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="account" color={color} size={26} />
             ),

@@ -116,14 +116,6 @@ const Profile = () => {
               <Text>เพิ่มรูปโปรไฟล์</Text>
             )}
           </TouchableOpacity>
-          {/* <Image
-            source={{
-              uri:
-                profilePicture ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-            }}
-            style={styles.profilePicture}
-          /> */}
         </View>
         <View>
           <Text style={styles.name}>Username : {userData?.username}</Text>
