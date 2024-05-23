@@ -265,6 +265,14 @@ export default function HomeScreen() {
             ? filteredData.filter((item) => item.Status === 1)
             : foodList.filter((item) => item.Status === 1)
         }
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require("../image/imageNmaterials.png")}
+              style={styles.emptyImage}
+            />
+          </View>
+        )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={food} />
         }
@@ -501,5 +509,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     alignItems: "center",
+  },
+  emptyImage: {
+    width: 420,
+    height: 490,
+    opacity: 0.5,
   },
 });

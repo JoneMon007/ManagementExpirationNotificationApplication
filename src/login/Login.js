@@ -1,6 +1,6 @@
 // import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Input, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -42,6 +42,10 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../image/MyFridge.png")}
+        style={styles.emptyImage}
+      />
       <Input
         style={styles.title}
         placeholder="  อีเมล"
@@ -127,5 +131,10 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 14,
     marginBottom: 10,
+  },
+  emptyImage: {
+    width: 150,
+    height: 200,
+    marginTop: -100, // ปรับค่านี้ตามความต้องการเพื่อขยับขึ้นบน
   },
 });

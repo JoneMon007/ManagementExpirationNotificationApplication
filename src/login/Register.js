@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, Alert, Image } from "react-native";
 import { auth, db } from "../../firebase/firebase";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -65,6 +65,10 @@ const RegistrationScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../image/Register.png")}
+        style={styles.emptyImage}
+      />
       <Text style={styles.title}>ตู้เย็นของฉัน</Text>
       <TextInput
         placeholder="ชื่อผู้ใช้งาน"
@@ -122,6 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginVertical: 20,
+    marginTop: -40,
   },
   input: {
     width: "80%",
@@ -142,6 +147,11 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontSize: 16,
+  },
+  emptyImage: {
+    width: 200,
+    height: 200,
+    marginTop: -80, // ปรับค่านี้ตามความต้องการเพื่อขยับขึ้นบน
   },
 });
 

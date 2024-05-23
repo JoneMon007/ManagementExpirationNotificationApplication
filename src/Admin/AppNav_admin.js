@@ -66,13 +66,10 @@ export default function AppNav_admin() {
   return (
     <NavigationContainer>
       <View style={styles.header}>
-        <Text style={styles.title}>My freidge</Text>
-        {/* <MaterialCommunityIcons
-          name="logout"
-          color={"#f0edf6"}
-          size={26}
-          onPress={logOut}
-        /> */}
+        <Text style={styles.title}>
+          ตู้เย็นของฉัน (Admin)
+          <MaterialCommunityIcons name="fridge" size={26} />
+        </Text>
       </View>
       <Tab.Navigator
         initialRouteName="Home"
@@ -159,14 +156,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   header: {
-    padding: 40,
+    padding: 20,
     backgroundColor: "#4CAF50",
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
   title: {
-    fontSize: 50,
+    fontSize: 25,
     color: "white",
     alignItems: "center",
     minHeight: "50px",

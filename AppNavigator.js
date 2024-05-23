@@ -61,7 +61,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.header}>
-        <Text style={styles.title}>ตู้เย็นของฉัน</Text>
+        <Text style={styles.title}>
+          ตู้เย็นของฉัน
+          <MaterialCommunityIcons name="fridge" size={26} />
+        </Text>
         {/* <MaterialCommunityIcons
           name="logout"
           color={"#f0edf6"}
@@ -130,14 +133,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   header: {
-    padding: 40,
+    padding: 20,
     backgroundColor: "#4CAF50",
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
   title: {
-    fontSize: 50,
+    fontSize: 25,
     color: "white",
     alignItems: "center",
     minHeight: "50px",
