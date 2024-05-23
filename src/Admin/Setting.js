@@ -27,13 +27,25 @@ const Setting = () => {
   const [notification, setNotification] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [notification_1, setNotification_1] = useState(
-    notification?.notification_1
+    notification?.Notification_1
   );
   const [notification_2, setNotification_2] = useState(
-    notification?.notification_2
+    notification?.Notification_2
   );
   const [notification_3, setNotification_3] = useState(
-    notification?.notification_3
+    notification?.Notification_3
+  );
+  const [notification_vegetable, setNotification_Vegetable] = useState(
+    notification?.Notification_Vegetable
+  );
+  const [notification_drink, setNotification_Drink] = useState(
+    notification?.Notification_Drink
+  );
+  const [notification_fruit, setNotification_Fruit] = useState(
+    notification?.Notification_Fruit
+  );
+  const [notification_meat, setNotification_Meat] = useState(
+    notification?.Notification_Meat
   );
   const navigation = useNavigation();
 
@@ -44,6 +56,7 @@ const Setting = () => {
         const users = querySnapshot.docs.map((doc) => doc.data());
         console.log(users); // Log the data fetched from firestore
         setNotification(users); // Set the data to state
+        console.log(notification.Notification_1);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -51,6 +64,18 @@ const Setting = () => {
 
     fetchUserData();
   }, []);
+  useEffect(() => {
+    if (notification.length > 0) {
+      // Set all notification related states here
+      setNotification_1(notification[0].Notification_1);
+      setNotification_2(notification[0].Notification_2);
+      setNotification_3(notification[0].Notification_3);
+      setNotification_Vegetable(notification[0].Notification_Vegetable);
+      setNotification_Drink(notification[0].Notification_Drink);
+      setNotification_Fruit(notification[0].Notification_Fruit);
+      setNotification_Meat(notification[0].Notification_Meat);
+    }
+  }, [notification]); // Depend on notification state
 
   async function addItem() {
     const tokensCollectionRef = doc(db, "Notification", auth.currentUser.uid);
@@ -62,6 +87,10 @@ const Setting = () => {
         Notification_1: notification_1,
         Notification_2: notification_2,
         Notification_3: notification_3,
+        Notification_Vegetable: notification_vegetable,
+        Notification_Drink: notification_drink,
+        Notification_Fruit: notification_fruit,
+        Notification_Meat: notification_meat,
       });
     } catch (error) {
       console.log(error);
@@ -81,8 +110,7 @@ const Setting = () => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Setting</Text>
-          <TouchableOpacity style={styles.closeButton}></TouchableOpacity>
+          <Text style={styles.title}>ตั้งค่าการแจ้งเตือน</Text>
         </View>
         <Text style={styles.text}>แจ้งเตือนครั้งที่ 1 (วัน)</Text>
         <TextInput
@@ -107,8 +135,45 @@ const Setting = () => {
           onChangeText={setNotification_3}
         />
 
+        <View style={styles.header}>
+          <Text style={styles.title}>ตั้งค่าประเภทวัตถุดิบการแจ้งเตือน</Text>
+        </View>
+
+        <Text style={styles.text}>ผัก (วัน) </Text>
+        <TextInput
+          placeholder="เลือกจำนวนวัน"
+          style={styles.input}
+          value={notification_vegetable}
+          onChangeText={setNotification_Vegetable}
+          //   editable={false}
+        />
+        <Text style={styles.text}>เครื่องดื่ม (วัน) </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="เลือกจำนวนวัน"
+          value={notification_drink}
+          onChangeText={setNotification_Drink}
+        />
+        <Text style={styles.text}>ผลไม้ (วัน) </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="เลือกจำนวนวัน"
+          value={notification_fruit}
+          onChangeText={setNotification_Fruit}
+        />
+        <Text style={styles.text}>เนื้อ (วัน) </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="เลือกจำนวนวัน"
+          value={notification_meat}
+          onChangeText={setNotification_Meat}
+        />
+
+        <View style={styles.header}>
+          <Text style={styles.title}>ตั้งค่าประเภทวัตถุดิบการแจ้งเตือน</Text>
+        </View>
         <Pressable style={styles.button} onPress={addItem}>
-          <Text style={styles.text}>Update User</Text>
+          <Text style={styles.text}>แก้ไขการตั้งค่า</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -127,13 +192,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 25,
+    fontSize: 20,
     color: "#4CAF50",
     alignItems: "center",
     minHeight: "50px",
     minWidth: "20%",
     maxWidth: 500,
     fontWeight: "800",
+    marginTop: 15, // Increase this value to create more space above the button
   },
   closeButton: {
     padding: 10,
@@ -168,12 +234,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 3,
     backgroundColor: "#4CAF50",
+    marginTop: 15, // Increase this value to create more space above the button
   },
   text: {
     fontSize: 18,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
+    marginTop: 15, // Increase this value to create more space above the button
   },
 });
 

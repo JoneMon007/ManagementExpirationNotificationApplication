@@ -93,13 +93,6 @@ export default function UsersEdit({ route }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Add an item</Text>
-          <TouchableOpacity style={styles.closeButton}>
-            <Text>X</Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
           {image ? (
             <Image
@@ -107,7 +100,7 @@ export default function UsersEdit({ route }) {
               style={{ width: 100, height: 100 }}
             />
           ) : (
-            <Text>Add Photo</Text>
+            <Text>เพิ่มรูปวัตถุดิบ</Text>
           )}
         </TouchableOpacity>
 
@@ -136,7 +129,7 @@ export default function UsersEdit({ route }) {
         <TextInput style={styles.input} value={linetoken} editable={false} />
 
         <Pressable style={styles.button} onPress={addItem}>
-          <Text style={styles.text}>Update User</Text>
+          <Text style={styles.text}>แก้ไข</Text>
         </Pressable>
         {/* <Button
         title="Add item"
@@ -190,6 +183,10 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginTop: 10,
+    backgroundColor: "#d3d3d3", // darker gray for better contrast
+    borderWidth: 2, // thicker border for better visibility
+    borderColor: "#a9a9a9", // darker gray border
+    borderRadius: 5,
   },
   button: {
     alignItems: "center",

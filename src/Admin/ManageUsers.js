@@ -46,7 +46,7 @@ const ManageUsers = () => {
 
   return (
     <>
-      <View style={styles.searchBar}>
+      {/* <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
           placeholder="ค้นหา"
@@ -56,7 +56,7 @@ const ManageUsers = () => {
           }
           onChangeText={ManageUsers}
         />
-      </View>
+      </View> */}
 
       <FlatList
         data={filteredData}

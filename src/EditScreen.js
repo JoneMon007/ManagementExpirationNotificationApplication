@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,7 +11,14 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
@@ -27,33 +34,47 @@ export default function EditScreen({ route }) {
   const [category, setCategory] = useState(item?.Category);
   const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity || 0);
   const [materials_used, setmaterials_used] = useState(0);
+  const [Numnotification, setnumNotification] = useState([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userDocRef = doc(
+        db,
+        "Notification",
+        "s0VWfSTXvhQTjgwjj9cPzOYVTPR2"
+      );
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        console.log("Main user document data:", userDocSnap.data());
+        setnumNotification(userDocSnap.data());
+      } else {
+        console.log("No such user document!");
+      }
+    };
+    console.log("food useEffect");
+    fetchUserData();
+  }, []);
 
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
-
-    if (itemValue === "meat") {
-      const seven = dayjs().add(7, "day").toDate();
-      console.log("meat seven ", seven);
-      setSelectedDate(seven);
-
-      console.log("selectedDate addItemScreen", selectedDate);
-    } else if (itemValue === "vegetable") {
-      const fourteen = dayjs().add(14, "day").toDate();
-      setSelectedDate(fourteen);
-      console.log("vegetable fourteen ", fourteen);
-    } else if (itemValue === "drink") {
-      const month = dayjs().add(30, "day").toDate();
-      setSelectedDate(month);
-      console.log("drink month ", month);
+    let newDate;
+    if (itemValue === "เนื้อ") {
+      newDate = dayjs().add(Numnotification.Notification_Meat, "day").toDate();
+    } else if (itemValue === "ผัก") {
+      newDate = dayjs()
+        .add(Numnotification.Notification_Vegetable, "day")
+        .toDate();
+    } else if (itemValue === "เครื่องดื่ม") {
+      newDate = dayjs().add(Numnotification.Notification_Drink, "day").toDate();
     } else {
-      const fourteen = dayjs().add(14, "day").toDate();
-      setSelectedDate(fourteen);
-      console.log("Fruit fourteen ", fourteen);
+      newDate = dayjs().add(14, "day").toDate(); // ตัวอย่างการตั้งค่าเริ่มต้น
     }
-  };
+    const dateObject = new Date(newDate);
+    setSelectedDate(dateObject); // ตั้งค่า state ด้วยวัตถุ Date
+    console.log("dateObject" + dateObject);
 
-  const handleDateChange = (newDate) => {
-    setSelectedDate(newDate);
+    console.log("Updated date based on category change: ", newDate);
   };
 
   const requestPermission = async () => {
@@ -94,12 +115,6 @@ export default function EditScreen({ route }) {
     const imageUrl = await uploadImageAsync(image);
 
     const values = Math.max(0, totalQuantity - materials_used);
-    // console.log("typeof totalQuantity", typeof totalQuantity);
-    // console.log("typeof materials_used", typeof materials_used);
-    // console.log("quantity :", quantity);
-    // console.log("totalQuantity :", totalQuantity);
-    // console.log("materials_used :", materials_used);
-    // console.log("values :", values);
     try {
       await updateDoc(docRef, {
         NameFood: itemName,
@@ -129,7 +144,7 @@ export default function EditScreen({ route }) {
               style={{ width: 100, height: 100 }}
             />
           ) : (
-            <Text>Add Photo</Text>
+            <Text>เพิ่มรูปวัตถุดิบ</Text>
           )}
         </TouchableOpacity>
 
@@ -217,6 +232,10 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginTop: 10,
+    backgroundColor: "#d3d3d3", // darker gray for better contrast
+    borderWidth: 2, // thicker border for better visibility
+    borderColor: "#a9a9a9", // darker gray border
+    borderRadius: 5,
   },
   button: {
     alignItems: "center",
@@ -226,6 +245,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 3,
     backgroundColor: "#4CAF50",
+    marginTop: 15, // Increase this value to create more space above the button
   },
   text: {
     fontSize: 16,

@@ -10,27 +10,18 @@ export default function DateTimeComponent({ value }) {
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    // const date = dayjs.unix(parseInt(value));
-    // const readableDate = date.format("MM/DD/YYYY");
-    // const unixTimestamp = parseInt(value, 10); // Convert string to number
-    // const dateObject = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds and create a Date object
-
+    const currentDate = selectedDate || date || value;
     console.log("currentDate datepicker component ", currentDate);
-    console.log(
-      "value datepicker component "
-      // dateObject
-      // value
-      // new Date(value).toLocaleString("en-GB", { timeZone: "UTC" })
-    );
-    // console.log("value datepicker component ", value.toDate());
+    console.log("value datepicker component ");
 
     setShow(Platform.OS === "ios");
 
     if (value) {
       setDate(value);
+      console.log("value : " + value);
     } else {
       setDate(currentDate);
+      console.log("currentDate : " + date);
     }
   };
 

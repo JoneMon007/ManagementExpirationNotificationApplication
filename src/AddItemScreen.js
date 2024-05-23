@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,7 +12,14 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
@@ -21,13 +28,34 @@ import dayjs from "dayjs";
 export default function AddItemScreen() {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [category, setCategory] = useState("vegetable");
+  const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
   const [unit, setunit] = useState("Gram");
   const [totalQuantity, settotalQuantity] = useState("");
   const [status, setstatus] = useState(1);
+  const [Numnotification, setnumNotification] = useState([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userDocRef = doc(
+        db,
+        "Notification",
+        "s0VWfSTXvhQTjgwjj9cPzOYVTPR2"
+      );
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        // console.log("Main user document data:", userDocSnap.data());
+        setnumNotification(userDocSnap.data());
+      } else {
+        console.log("No such user document!");
+      }
+    };
+    console.log("food useEffect");
+    fetchUserData();
+  }, []);
 
   const handleunitChange = (itemValue) => {
     setunit(itemValue);
@@ -36,21 +64,29 @@ export default function AddItemScreen() {
     setCategory(itemValue);
 
     if (itemValue === "เนื้อ") {
-      const seven = dayjs().add(7, "day").toDate();
+      const seven = dayjs()
+        .add(Numnotification.Notification_Meat, "day")
+        .toDate();
       console.log("meat seven ", seven);
       setSelectedDate(seven);
 
       console.log("selectedDate addItemScreen", selectedDate);
     } else if (itemValue === "ผัก") {
-      const fourteen = dayjs().add(14, "day").toDate();
+      const fourteen = dayjs()
+        .add(Numnotification.Notification_Vegetable, "day")
+        .toDate();
       setSelectedDate(fourteen);
       console.log("vegetable fourteen ", fourteen);
     } else if (itemValue === "เครื่องดื่ม") {
-      const month = dayjs().add(30, "day").toDate();
+      const month = dayjs()
+        .add(Numnotification.Notification_Drink, "day")
+        .toDate();
       setSelectedDate(month);
       console.log("drink month ", month);
     } else {
-      const fourteen = dayjs().add(14, "day").toDate();
+      const fourteen = dayjs()
+        .add(Numnotification.Notification_Drink, "day")
+        .toDate();
       setSelectedDate(fourteen);
       console.log("Fruit fourteen ", fourteen);
     }
@@ -176,8 +212,8 @@ export default function AddItemScreen() {
           <Picker.Item label="ลูก" value="ลูก" />
           <Picker.Item label="ตัว" value="ตัว" />
         </Picker>
-        <DateTimeComponent defaultValue={dayjs(selectedDate)} />
-        {/* <DateTimeComponent value={selectedDate} /> */}
+        {/* <DateTimeComponent defaultValue={dayjs(selectedDate)} /> */}
+        <DateTimeComponent value={selectedDate} />
 
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>เพิ่มวัตถุดิบ !</Text>
@@ -234,6 +270,10 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginTop: 10,
+    backgroundColor: "#d3d3d3", // darker gray for better contrast
+    borderWidth: 2, // thicker border for better visibility
+    borderColor: "#a9a9a9", // darker gray border
+    borderRadius: 5,
   },
   button: {
     alignItems: "center",
@@ -243,6 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 3,
     backgroundColor: "#4CAF50",
+    marginTop: 15, // Increase this value to create more space above the button
   },
   text: {
     fontSize: 16,

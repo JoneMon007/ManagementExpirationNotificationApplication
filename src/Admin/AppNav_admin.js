@@ -78,7 +78,7 @@ export default function AppNav_admin() {
         inactiveColor="#5db075"
       >
         <Tab.Screen
-          name="HomeScreen"
+          name="HomeScreen99"
           component={StackNavigator}
           options={{
             tabBarLabel: "หน้าหลัก",
@@ -126,7 +126,7 @@ export default function AppNav_admin() {
           name="ManageUsers"
           component={ManageUsers}
           options={{
-            tabBarLabel: "ManageUsers",
+            tabBarLabel: "จัดการผู้ใช้",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="account-multiple"
@@ -140,7 +140,7 @@ export default function AppNav_admin() {
           name="setting"
           component={Setting}
           options={{
-            tabBarLabel: "setting",
+            tabBarLabel: "ตั้งค่า",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="alarm" color={color} size={26} />
             ),
