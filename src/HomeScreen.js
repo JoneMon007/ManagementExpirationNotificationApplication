@@ -20,7 +20,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import { useRef } from "react";
 import * as Device from "expo-device";
@@ -103,7 +103,11 @@ export default function HomeScreen() {
     }
     setRefreshing(false);
   }
-
+  useFocusEffect(
+    React.useCallback(() => {
+      food();
+    }, [])
+  );
   async function schedulePushNotification(foodName, timeDiff) {
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -424,7 +428,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     borderRadius: 10,
-    backgroundColor: "#FF231F7C",
+    backgroundColor: "#BABABA",
     margin: 10,
   },
   image: {

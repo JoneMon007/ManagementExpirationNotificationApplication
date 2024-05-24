@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
@@ -47,6 +48,7 @@ const Setting = () => {
   const [notification_meat, setNotification_Meat] = useState(
     notification?.Notification_Meat
   );
+  const [loadingAddItem, setLoadingAddItem] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -78,6 +80,7 @@ const Setting = () => {
   }, [notification]); // Depend on notification state
 
   async function addItem() {
+    setLoadingAddItem(true);
     const tokensCollectionRef = doc(db, "Notification", auth.currentUser.uid);
     // const tokensCollectionRef = doc(db, "Notification", "NotificationDetail");
     try {
@@ -94,6 +97,8 @@ const Setting = () => {
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingAddItem(false);
     }
     console.log(
       "Update success :" + notification_1,
@@ -104,6 +109,15 @@ const Setting = () => {
     setNotification_1("");
     setNotification_2("");
     setNotification_3("");
+  }
+  if (loadingAddItem) {
+    return (
+      <ActivityIndicator
+        size={100}
+        color={"#4CAF50"}
+        style={{ alignItems: "center", flex: 1 }}
+      />
+    );
   }
 
   return (
@@ -118,6 +132,7 @@ const Setting = () => {
           style={styles.input}
           value={notification_1}
           onChangeText={setNotification_1}
+          keyboardType="number-pad"
           //   editable={false}
         />
         <Text style={styles.text}>แจ้งเตือนครั้งที่ 2 (วัน) </Text>
@@ -126,6 +141,7 @@ const Setting = () => {
           placeholder="แจ้งเตือนครั้งที่ 2 (วัน)"
           value={notification_2}
           onChangeText={setNotification_2}
+          keyboardType="number-pad"
         />
         <Text style={styles.text}>แจ้งเตือนครั้งที่ 3 (วัน) </Text>
         <TextInput
@@ -133,6 +149,7 @@ const Setting = () => {
           placeholder="แจ้งเตือนครั้งที่ 3 (วัน)"
           value={notification_3}
           onChangeText={setNotification_3}
+          keyboardType="number-pad"
         />
 
         <View style={styles.header}>
@@ -145,6 +162,7 @@ const Setting = () => {
           style={styles.input}
           value={notification_vegetable}
           onChangeText={setNotification_Vegetable}
+          keyboardType="number-pad"
           //   editable={false}
         />
         <Text style={styles.text}>เครื่องดื่ม (วัน) </Text>
@@ -153,6 +171,7 @@ const Setting = () => {
           placeholder="เลือกจำนวนวัน"
           value={notification_drink}
           onChangeText={setNotification_Drink}
+          keyboardType="number-pad"
         />
         <Text style={styles.text}>ผลไม้ (วัน) </Text>
         <TextInput
@@ -160,6 +179,7 @@ const Setting = () => {
           placeholder="เลือกจำนวนวัน"
           value={notification_fruit}
           onChangeText={setNotification_Fruit}
+          keyboardType="number-pad"
         />
         <Text style={styles.text}>เนื้อ (วัน) </Text>
         <TextInput
@@ -167,11 +187,9 @@ const Setting = () => {
           placeholder="เลือกจำนวนวัน"
           value={notification_meat}
           onChangeText={setNotification_Meat}
+          keyboardType="number-pad"
         />
 
-        <View style={styles.header}>
-          <Text style={styles.title}>ตั้งค่าประเภทวัตถุดิบการแจ้งเตือน</Text>
-        </View>
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>แก้ไขการตั้งค่า</Text>
         </Pressable>

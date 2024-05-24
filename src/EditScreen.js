@@ -1,40 +1,36 @@
+import { Picker } from "@react-native-picker/picker";
+import dayjs from "dayjs";
+import * as ImagePicker from "expo-image-picker";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  Image,
+  Pressable,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
-  Button,
-  Image,
-  Pressable,
+  View,
+  ActivityIndicator,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import * as ImagePicker from "expo-image-picker";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { ScrollView } from "react-native-gesture-handler";
 import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
-import { ScrollView } from "react-native-gesture-handler";
-import dayjs from "dayjs";
+import { useNavigation } from "@react-navigation/native";
 
 export default function EditScreen({ route }) {
   const { item, documentId } = route.params;
   const [itemName, setItemName] = useState(item?.NameFood);
   const [quantity, setQuantity] = useState(item?.Quantity);
   const [image, setImage] = useState(item?.image_url);
-  const [selectedDate, setSelectedDate] = useState(item?.Time_End);
   const [category, setCategory] = useState(item?.Category);
   const [totalQuantity, settotalQuantity] = useState(item?.totalQuantity || 0);
   const [materials_used, setmaterials_used] = useState(0);
   const [Numnotification, setnumNotification] = useState([]);
+  const [date, setDate] = useState(item?.Time_End.toDate());
+  const [loadingAddItem, setLoadingAddItem] = useState(false);
+  const navigation = useNavigation(); // ใช้ hook useNavigation
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -68,10 +64,10 @@ export default function EditScreen({ route }) {
     } else if (itemValue === "เครื่องดื่ม") {
       newDate = dayjs().add(Numnotification.Notification_Drink, "day").toDate();
     } else {
-      newDate = dayjs().add(14, "day").toDate(); // ตัวอย่างการตั้งค่าเริ่มต้น
+      newDate = dayjs().add(Numnotification.Notification_Fruit, "day").toDate(); // ตัวอย่างการตั้งค่าเริ่มต้น
     }
     const dateObject = new Date(newDate);
-    setSelectedDate(dateObject); // ตั้งค่า state ด้วยวัตถุ Date
+    setDate(dateObject); // ตั้งค่า state ด้วยวัตถุ Date
     console.log("dateObject" + dateObject);
 
     console.log("Updated date based on category change: ", newDate);
@@ -96,15 +92,15 @@ export default function EditScreen({ route }) {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri);
       console.log(result.assets[0].uri);
     }
   };
 
   async function addItem() {
-    const currentDate = new Date(); // สร้างวันที่ปัจจุบัน
-    currentDate.setDate(currentDate.getDate() + 1); // เพิ่มวันที่ปัจจุบันด้วย 1
+    setLoadingAddItem(true);
+
     const docRef = doc(
       db,
       "Myfridge",
@@ -120,20 +116,38 @@ export default function EditScreen({ route }) {
         NameFood: itemName,
         Time_start: new Date(Date.now()),
         totalQuantity: values,
-        Time_End: selectedDate,
+        Time_End: date,
         image_url: imageUrl,
         Category: category,
       });
+      // console.log("selectedDate :  " + selectedDate);
+      console.log("date :  " + date);
       console.log("Document updated successfully");
     } catch (error) {
       console.log(error);
       console.error("Error updating document: ", error);
+    } finally {
+      setLoadingAddItem(false);
     }
+
     setItemName("");
     setQuantity("");
     setImage(null);
-    setSelectedDate(new Date());
+    // setSelectedDate(new Date());
+    // setLoadingAddItem(false)
+    navigation.navigate("HomeScreen");
   }
+
+  if (loadingAddItem) {
+    return (
+      <ActivityIndicator
+        size={100}
+        color={"#4CAF50"}
+        style={{ alignItems: "center", flex: 1 }}
+      />
+    );
+  }
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -170,16 +184,35 @@ export default function EditScreen({ route }) {
           style={styles.input}
           placeholder="วัตถุดิบที่ใช้ไปเท่าไร"
           onChangeText={setmaterials_used}
+          keyboardType="number-pad"
         />
-
-        <DateTimeComponent value={selectedDate} />
-        <Pressable style={styles.button} onPress={addItem}>
+        <TextInput
+          editable={false}
+          selectTextOnFocus={false} // ปิดการเลือกข้อความเมื่อได้รับการโฟกัส
+          caretHidden={true}
+          style={[styles.input]}
+        >
+          {date ? date.toDateString() : ""}
+        </TextInput>
+        <DateTimeComponent value={date} setDate={setDate} date={date} />
+        <Pressable
+          style={styles.button}
+          onPress={addItem}
+          disabled={loadingAddItem}
+        >
           <Text style={styles.text}>ตกลง</Text>
         </Pressable>
-        {/* <Button
-        title="Add item"
-        onPress={() => console.log(selectedDate + "AddItemScreen")}
-      /> */}
+        {/* {loadingAddItem ? (
+          <ActivityIndicator size="large" color="#d45c5c" />
+        ) : (
+          <Pressable
+            style={styles.button}
+            onPress={addItem}
+            disabled={loadingAddItem}
+          >
+            <Text style={styles.text}>ตกลง</Text>
+          </Pressable>
+        )} */}
       </View>
     </ScrollView>
   );

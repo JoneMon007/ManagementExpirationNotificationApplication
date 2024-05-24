@@ -10,12 +10,14 @@ import {
   Pressable,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebase";
 import { uploadImageAsync } from "../uploadImageAsync";
+import { useNavigation } from "@react-navigation/native";
 
 export default function UsersEdit({ route }) {
   const { item, documentId } = route.params;
@@ -24,6 +26,8 @@ export default function UsersEdit({ route }) {
   const [linetoken, setLineToken] = useState(item?.LineToken);
   const [role, setRole] = useState(item?.Role);
   const [image, setImage] = useState(item?.image_url);
+  const [loadingAddItem, setLoadingAddItem] = useState(false);
+  const navigation = useNavigation(); // ใช้ hook useNavigation
 
   const handleConfirmationRole = (itemValue) => {
     Alert.alert(
@@ -66,29 +70,44 @@ export default function UsersEdit({ route }) {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri);
       console.log(result.assets[0].uri);
     }
   };
 
   async function addItem() {
-    const docRef = doc(db, "Myfridge", auth.currentUser.uid);
+    const docRef = doc(db, "Myfridge", item.id);
     const imageUrl = await uploadImageAsync(image);
 
     try {
       await updateDoc(docRef, {
-        username: itemusername,
-        Time_End: setEmail,
-        image_url: imageUrl,
+        username: Username,
+        email: email,
+        image_url:
+          imageUrl ||
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+        Role: role,
       });
       console.log("Document updated successfully");
     } catch (error) {
       console.log(error);
       console.error("Error updating document: ", error);
+    } finally {
+      setLoadingAddItem(false);
     }
     setusername("");
     setImage(null);
+    navigation.navigate("ManageUsers");
+  }
+  if (loadingAddItem) {
+    return (
+      <ActivityIndicator
+        size={100}
+        color={"#4CAF50"}
+        style={{ alignItems: "center", flex: 1 }}
+      />
+    );
   }
   return (
     <ScrollView>

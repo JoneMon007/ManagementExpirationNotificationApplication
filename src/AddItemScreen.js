@@ -9,6 +9,7 @@ import {
   Image,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
@@ -24,18 +25,22 @@ import { auth, db } from "../firebase/firebase";
 import DateTimeComponent from "./DateTimePicker";
 import { uploadImageAsync } from "./uploadImageAsync";
 import dayjs from "dayjs";
+import { useNavigation } from "@react-navigation/native";
 
 export default function AddItemScreen() {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
   const [unit, setunit] = useState("Gram");
   const [totalQuantity, settotalQuantity] = useState("");
   const [status, setstatus] = useState(1);
   const [Numnotification, setnumNotification] = useState([]);
+  const [loadingAddItem, setLoadingAddItem] = useState(false);
+  const navigation = useNavigation(); // ใช้ hook useNavigation
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -62,34 +67,23 @@ export default function AddItemScreen() {
   };
   const handleCategoryChange = (itemValue) => {
     setCategory(itemValue);
-
+    let newDate;
     if (itemValue === "เนื้อ") {
-      const seven = dayjs()
-        .add(Numnotification.Notification_Meat, "day")
-        .toDate();
-      console.log("meat seven ", seven);
-      setSelectedDate(seven);
-
-      console.log("selectedDate addItemScreen", selectedDate);
+      newDate = dayjs().add(Numnotification.Notification_Meat, "day").toDate();
     } else if (itemValue === "ผัก") {
-      const fourteen = dayjs()
+      newDate = dayjs()
         .add(Numnotification.Notification_Vegetable, "day")
         .toDate();
-      setSelectedDate(fourteen);
-      console.log("vegetable fourteen ", fourteen);
     } else if (itemValue === "เครื่องดื่ม") {
-      const month = dayjs()
-        .add(Numnotification.Notification_Drink, "day")
-        .toDate();
-      setSelectedDate(month);
-      console.log("drink month ", month);
+      newDate = dayjs().add(Numnotification.Notification_Drink, "day").toDate();
     } else {
-      const fourteen = dayjs()
-        .add(Numnotification.Notification_Drink, "day")
-        .toDate();
-      setSelectedDate(fourteen);
-      console.log("Fruit fourteen ", fourteen);
+      newDate = dayjs().add(Numnotification.Notification_Fruit, "day").toDate(); // ตัวอย่างการตั้งค่าเริ่มต้น
     }
+    const dateObject = new Date(newDate);
+    setDate(dateObject); // ตั้งค่า state ด้วยวัตถุ Date
+    console.log("dateObject" + dateObject);
+
+    console.log("Updated date based on category change: ", newDate);
   };
 
   const requestPermission = async () => {
@@ -111,7 +105,7 @@ export default function AddItemScreen() {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri);
       console.log(result.assets[0].uri);
     }
@@ -122,6 +116,8 @@ export default function AddItemScreen() {
   }
 
   async function addItem() {
+    setLoadingAddItem(true);
+
     if (!itemName || !quantity || !category || !image || !selectedDate) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
@@ -137,7 +133,7 @@ export default function AddItemScreen() {
         Time_start: new Date(Date.now()),
         totalQuantity: quantity,
         Quantity: quantity,
-        Time_End: selectedDate,
+        Time_End: date,
         image_url: imageUrl,
         Unit: unit,
         Status: status,
@@ -150,13 +146,29 @@ export default function AddItemScreen() {
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingAddItem(false);
     }
+
     alert("Update success");
     setItemName("");
     setQuantity("");
     setImage(null);
     //setSelectedDate(new Date());
+    setDate();
+    navigation.navigate("HomeScreen");
   }
+
+  if (loadingAddItem) {
+    return (
+      <ActivityIndicator
+        size={100}
+        color={"#4CAF50"}
+        style={{ alignItems: "center", flex: 1 }}
+      />
+    );
+  }
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -198,6 +210,7 @@ export default function AddItemScreen() {
           placeholder="จำนวนวัตถุดิบ"
           value={quantity}
           onChangeText={setQuantity}
+          keyboardType="number-pad"
         />
         <Picker
           selectedValue={unit}
@@ -212,8 +225,15 @@ export default function AddItemScreen() {
           <Picker.Item label="ลูก" value="ลูก" />
           <Picker.Item label="ตัว" value="ตัว" />
         </Picker>
-        {/* <DateTimeComponent defaultValue={dayjs(selectedDate)} /> */}
-        <DateTimeComponent value={selectedDate} />
+        <TextInput
+          editable={false}
+          selectTextOnFocus={false} // ปิดการเลือกข้อความเมื่อได้รับการโฟกัส
+          caretHidden={true}
+          style={[styles.input]}
+        >
+          {date ? date.toDateString() : ""}
+        </TextInput>
+        <DateTimeComponent value={date} setDate={setDate} date={date} />
 
         <Pressable style={styles.button} onPress={addItem}>
           <Text style={styles.text}>เพิ่มวัตถุดิบ !</Text>

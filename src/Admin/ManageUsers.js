@@ -15,12 +15,12 @@ import { TextInput } from "react-native-paper";
 import { auth, db } from "../../firebase/firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 const ManageUsers = () => {
   const [userData, setUserData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [documentId, setDocumentId] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation(); // ใช้ hook useNavigation
 
   useEffect(() => {
@@ -32,6 +32,14 @@ const ManageUsers = () => {
         console.log(users); // Log the data fetched from firestore
         setUserData(users); // Set the data to state
         setDocumentId(id);
+        if (!documentId.empty) {
+          const id = querySnapshot.docs.map((item) => item.id);
+          setDocumentId(id);
+          console.log("documentId99  : " + documentId);
+        } else {
+          console.log("No documents found!");
+        }
+        console.log("documentId : " + documentId);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -46,18 +54,6 @@ const ManageUsers = () => {
 
   return (
     <>
-      {/* <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="ค้นหา"
-          value={
-            ""
-            // searchQuery
-          }
-          onChangeText={ManageUsers}
-        />
-      </View> */}
-
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
@@ -65,8 +61,12 @@ const ManageUsers = () => {
           return (
             //อันที่2
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("UsersEdit", { item, documentId })
+              onPress={
+                () =>
+                  navigation.navigate("UsersEdit", {
+                    item,
+                    documentId: item.id,
+                  }) // ส่ง id ของ item นั้นแทนที่จะเป็น array
               }
             >
               <ScrollView>

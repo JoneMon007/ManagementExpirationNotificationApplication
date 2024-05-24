@@ -72,7 +72,7 @@ const Profile = () => {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri);
       console.log(result.assets[0].uri);
     }
@@ -107,7 +107,7 @@ const Profile = () => {
               <Image
                 source={{
                   uri:
-                    image ||
+                    userData?.image_url ||
                     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
                 }}
                 style={styles.profilePicture}

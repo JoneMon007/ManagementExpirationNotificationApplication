@@ -4,24 +4,23 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Text } from "react-native-elements";
 // import dayjs from 'day.js';
 
-export default function DateTimeComponent({ value }) {
-  const [date, setDate] = useState(new Date());
+export default function DateTimeComponent({ value, setDate, date }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date || value;
+    const currentDate = selectedDate;
     console.log("currentDate datepicker component ", currentDate);
     console.log("value datepicker component ");
 
     setShow(Platform.OS === "ios");
 
-    if (value) {
+    if (currentDate) {
+      setDate(currentDate);
+      console.log("currentDate : " + currentDate);
+    } else {
       setDate(value);
       console.log("value : " + value);
-    } else {
-      setDate(currentDate);
-      console.log("currentDate : " + date);
     }
   };
 
