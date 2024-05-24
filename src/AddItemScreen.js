@@ -150,7 +150,6 @@ export default function AddItemScreen() {
       setLoadingAddItem(false);
     }
 
-    alert("Update success");
     setItemName("");
     setQuantity("");
     setImage(null);

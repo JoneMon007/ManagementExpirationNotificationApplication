@@ -105,7 +105,6 @@ const Setting = () => {
       notification_2,
       notification_3
     );
-    alert("Update success");
     setNotification_1("");
     setNotification_2("");
     setNotification_3("");

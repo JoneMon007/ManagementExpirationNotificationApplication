@@ -47,6 +47,29 @@ export default function HomeScreen() {
     }),
   });
 
+  async function requestPermission() {
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return false;
+      }
+
+      return true;
+    } else {
+      alert("Must use physical device for Push Notifications");
+      return false;
+    }
+  }
+
   async function food() {
     setRefreshing(true);
     console.log("Loading food");
@@ -342,7 +365,7 @@ export default function HomeScreen() {
                       style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
                       name="delete"
                       color="#ffff"
-                      size={26}
+                      size={35}
                     />
                   </View>
                 </View>
@@ -355,44 +378,44 @@ export default function HomeScreen() {
   );
 }
 
-async function registerForPushNotificationsAsync() {
-  let token;
+// async function registerForPushNotificationsAsync() {
+//   let token;
 
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
+//   if (Platform.OS === "android") {
+//     await Notifications.setNotificationChannelAsync("default", {
+//       name: "default",
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       lightColor: "#FF231F7C",
+//     });
+//   }
 
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    // Learn more about projectId:
-    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    token = (
-      await Notifications.getExpoPushTokenAsync({
-        projectId: "b1a5dde0-5cba-4f75-b805-43c5dc43c97e",
-      })
-    ).data;
-    console.log(token);
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
+//   if (Device.isDevice) {
+//     const { status: existingStatus } =
+//       await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
+//     if (existingStatus !== "granted") {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
+//     if (finalStatus !== "granted") {
+//       alert("Failed to get push token for push notification!");
+//       return;
+//     }
+//     // Learn more about projectId:
+//     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+//     token = (
+//       await Notifications.getExpoPushTokenAsync({
+//         projectId: "b1a5dde0-5cba-4f75-b805-43c5dc43c97e",
+//       })
+//     ).data;
+//     console.log(token);
+//   } else {
+//     alert("Must use physical device for Push Notifications");
+//   }
 
-  return token;
-}
+//   return token;
+// }
 
 const styles = StyleSheet.create({
   container: {

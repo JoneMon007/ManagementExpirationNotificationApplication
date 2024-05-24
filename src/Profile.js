@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
@@ -22,6 +23,7 @@ const Profile = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [linetoken, setLineToken] = useState("");
   const [image, setImage] = useState(null);
+  const [loadingAddItem, setLoadingAddItem] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -82,6 +84,11 @@ const Profile = () => {
   }
 
   async function addItem() {
+    if (!linetoken) {
+      alert("กรุณากรอกข้อมูล linetoken");
+      return;
+    }
+    setLoadingAddItem(true);
     const tokensCollectionRef = doc(db, "Myfridge", auth.currentUser.uid);
     const imageUrl = await uploadImageAsync(image);
     try {
@@ -96,6 +103,15 @@ const Profile = () => {
     }
     setLineToken("");
     //setSelectedDate(new Date());
+  }
+  if (loadingAddItem) {
+    return (
+      <ActivityIndicator
+        size={100}
+        color={"#4CAF50"}
+        style={{ alignItems: "center", flex: 1 }}
+      />
+    );
   }
 
   return (

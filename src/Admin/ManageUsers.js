@@ -23,6 +23,53 @@ const ManageUsers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation(); // ใช้ hook useNavigation
 
+  // const handleDelete = async (itemId) => {
+  //   const docRef = doc(
+  //     db, "Myfridge",
+  //     itemId
+  //   );
+
+  //   try {
+  //     await updateDoc(docRef, {
+  //       Status: 0,
+  //     });
+
+  //     const querySnapshot = await getDocs(
+  //       collection(db, "Myfridge")
+  //     );
+
+  //     const data = querySnapshot.docs.map((item) => item.data());
+
+  //     const filterData = data.filter((item) => {
+  //       return item?.Status === 1;
+  //     });
+
+  //     console.log(filterData);
+
+  //     setFoodList(filterData); // อัพเดตสถานะของรายการใน state
+  //   } catch (error) {
+  //     console.log("error handleDelete, " + error);
+  //   }
+  // };
+
+  // const handleDeleteConfirmation = (itemId) => {
+  //   Alert.alert(
+  //     "ยืนยันการลบ",
+  //     "คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?",
+  //     [
+  //       {
+  //         text: "ยกเลิก",
+  //         onPress: () => console.log("Cancel Pressed"),
+  //         style: "cancel",
+  //       },
+  //       {
+  //         text: "ยืนยัน",
+  //         onPress: () => handleDelete(itemId),
+  //       },
+  //     ],
+  //     { cancelable: false }
+  //   );
+  // };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -83,13 +130,13 @@ const ManageUsers = () => {
                     <Text style={styles.date}>ID : {item?.id}</Text>
                     <Text style={styles.date}>Username : {item?.username}</Text>
                     <Text style={styles.date}>Email : {item?.email}</Text>
-                    <MaterialCommunityIcons
+                    {/* <MaterialCommunityIcons
                       onPress={() => handleDeleteConfirmation(item.documentId)}
                       style={{ position: "absolute", right: 10, top: 10 }} // ปรับตำแหน่งปุ่ม
                       name="delete"
                       color="#ffff"
                       size={26}
-                    />
+                    /> */}
                   </View>
                 </View>
               </ScrollView>

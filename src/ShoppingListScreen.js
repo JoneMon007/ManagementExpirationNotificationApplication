@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
@@ -94,12 +95,17 @@ export default function ShoppingListScreen() {
         data={todos}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text>{item.text}</Text>
+            <Text style={styles.text88}>{item.text}</Text>
             <TouchableOpacity
               style={styles.removeItem}
               onPress={() => deleteTodo(item.id)}
             >
-              <Text> X</Text>
+              <MaterialCommunityIcons
+                style={{ right: -250 }} // ปรับตำแหน่งปุ่ม
+                name="delete"
+                color="#000000"
+                size={35}
+              />
             </TouchableOpacity>
           </View>
         )}
@@ -145,6 +151,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
+    fontSize: 18,
     marginVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
@@ -183,5 +190,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.25,
     color: "white",
+  },
+  text99: {
+    fontSize: 18, // ปรับขนาดให้ใหญ่ขึ้น
+    marginLeft: "auto",
+  },
+  text88: {
+    fontSize: 18, // ปรับขนาดให้ใหญ่ขึ้น
   },
 });
