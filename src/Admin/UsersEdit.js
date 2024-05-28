@@ -77,6 +77,7 @@ export default function UsersEdit({ route }) {
   };
 
   async function addItem() {
+    setLoadingAddItem(true);
     const docRef = doc(db, "Myfridge", item.id);
     const imageUrl = await uploadImageAsync(image);
 

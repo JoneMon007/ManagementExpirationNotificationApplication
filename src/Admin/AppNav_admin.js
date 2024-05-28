@@ -28,7 +28,7 @@ function StackNavigator() {
   }, []);
 
   return (
-    <Stack.Navigator initialRouteName="HomeScreen">
+    <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -44,6 +44,7 @@ function StackNavigator() {
         component={ShoppingListScreen}
         options={{ headerShown: false }}
       />
+      {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
       <Stack.Screen name="EditScreen" component={EditScreen} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="ManageUsers" component={ManageUsers} />

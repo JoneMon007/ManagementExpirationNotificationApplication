@@ -19,8 +19,7 @@ import { TextInput } from "react-native-paper";
 import { uploadImageAsync } from "./uploadImageAsync";
 
 const Profile = () => {
-  const [userData, setUser] = useState([]);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [userData, setUser] = useState({});
   const [linetoken, setLineToken] = useState("");
   const [image, setImage] = useState(null);
   const [loadingAddItem, setLoadingAddItem] = useState(false);
@@ -32,20 +31,17 @@ const Profile = () => {
 
       if (userDocSnap.exists()) {
         console.log("Main user document data:", userDocSnap.data());
-
         setUser(userDocSnap.data());
-        setImage(userData?.image_url);
-        console.log("image  : " + image);
+        console.log("userData.image_url : " + userDocSnap.data().image_url);
       } else {
         console.log("No such user document!");
       }
     };
 
-    // Use this function with the UID of the user
     fetchUserData();
-    // setFoodData();
     console.log(auth.currentUser.uid);
   }, []);
+
   const logOut = () => {
     signOut(auth)
       .then(() => {
@@ -55,6 +51,7 @@ const Profile = () => {
         console.log("logout error", error);
       });
   };
+
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -79,9 +76,6 @@ const Profile = () => {
       console.log(result.assets[0].uri);
     }
   };
-  async function handleUploadImage(uri) {
-    await saveImageInfoToFirestore(imageUrl);
-  }
 
   async function addItem() {
     if (!linetoken) {
@@ -90,7 +84,7 @@ const Profile = () => {
     }
     setLoadingAddItem(true);
     const tokensCollectionRef = doc(db, "Myfridge", auth.currentUser.uid);
-    const imageUrl = await uploadImageAsync(image);
+    const imageUrl = image ? await uploadImageAsync(image) : userData.image_url;
     try {
       await updateDoc(tokensCollectionRef, {
         image_url: imageUrl,
@@ -100,10 +94,12 @@ const Profile = () => {
       console.log("LineToken :", linetoken);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingAddItem(false);
     }
     setLineToken("");
-    //setSelectedDate(new Date());
   }
+
   if (loadingAddItem) {
     return (
       <ActivityIndicator
@@ -119,12 +115,10 @@ const Profile = () => {
       <View style={styles.container}>
         <View style={styles.profilePictureContainer}>
           <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-            {image ? (
+            {userData.image_url || image ? (
               <Image
                 source={{
-                  uri:
-                    userData?.image_url ||
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                  uri: image || userData.image_url,
                 }}
                 style={styles.profilePicture}
               />
@@ -134,8 +128,8 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <Text style={styles.name}>Username : {userData?.username}</Text>
-          <Text style={styles.email}>Email : {userData?.email}</Text>
+          <Text style={styles.name}>Username : {userData.username}</Text>
+          <Text style={styles.email}>Email : {userData.email}</Text>
           <Text style={styles.email}></Text>
           <TextInput
             style={styles.input}
@@ -193,19 +187,15 @@ const styles = StyleSheet.create({
     color: "#999",
   },
   name: {
-    // flex: 1,
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
   },
   email: {
-    // flex: 1,
     fontSize: 16,
     color: "#666",
   },
-  logout: {},
   button: {
-    // flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,

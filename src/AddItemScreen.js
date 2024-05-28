@@ -30,12 +30,12 @@ import { useNavigation } from "@react-navigation/native";
 export default function AddItemScreen() {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("ผัก");
   const [image, setImage] = useState(null);
   const [date, setDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
-  const [unit, setunit] = useState("Gram");
+  const [unit, setunit] = useState("กรัม");
   const [totalQuantity, settotalQuantity] = useState("");
   const [status, setstatus] = useState(1);
   const [Numnotification, setnumNotification] = useState([]);
@@ -155,7 +155,7 @@ export default function AddItemScreen() {
     setImage(null);
     //setSelectedDate(new Date());
     setDate();
-    navigation.navigate("HomeScreen");
+    navigation.navigate("Home");
   }
 
   if (loadingAddItem) {

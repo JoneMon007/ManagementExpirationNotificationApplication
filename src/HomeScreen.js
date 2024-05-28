@@ -83,37 +83,41 @@ export default function HomeScreen() {
         return {
           Time_End: item.data()?.Time_End,
           NameFood: item.data()?.NameFood,
+          Status: item.data()?.Status,
         };
       });
       const id = querySnapshot.docs.map((item) => item.id);
 
       foodData.forEach((foodData) => {
         const expiryDate = new Date(foodData?.Time_End?.toDate());
-        // console.log(expiryDate);
         const currentDate = new Date();
         const timeDifference = expiryDate - currentDate;
         const timeDiff = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        console.log("timeDiff ", timeDiff);
+        console.log("foodData.Status : " + foodData.Status);
+        // Check if the food item is active
+        if (foodData.Status === 1) {
+          console.log("timeDiff ", timeDiff);
 
-        if (timeDiff === Numnotification?.Notification_1) {
-          console.log("timeDifference = " + Numnotification?.Notification_1);
-          schedulePushNotification(foodData?.NameFood, timeDiff);
-          // sendLineNotification(foodData?.NameFood, timeDiff);
-        }
-        if (timeDiff === Numnotification?.Notification_2) {
-          console.log("timeDifference = " + Numnotification?.Notification_2);
-          schedulePushNotification(foodData?.NameFood, timeDiff);
-          // sendLineNotification(foodData?.NameFood, timeDiff);
-        }
-        if (timeDiff === Numnotification?.Notification_3) {
-          console.log("timeDifference = " + Numnotification?.Notification_3);
-          schedulePushNotification(foodData?.NameFood, timeDiff);
-          // sendLineNotification(foodData?.NameFood, timeDiff);
-        }
-        if (timeDiff <= 0) {
-          console.log("timeDifference = 0");
-          schedulePushNotification2(foodData?.NameFood, timeDiff);
-          // sendLineNotification(foodData?.NameFood, timeDiff);
+          if (timeDiff === Numnotification?.Notification_1) {
+            console.log("timeDifference = " + Numnotification?.Notification_1);
+            schedulePushNotification(foodData?.NameFood, timeDiff);
+            // sendLineNotification(foodData?.NameFood, timeDiff);
+          }
+          if (timeDiff === Numnotification?.Notification_2) {
+            console.log("timeDifference = " + Numnotification?.Notification_2);
+            schedulePushNotification(foodData?.NameFood, timeDiff);
+            // sendLineNotification(foodData?.NameFood, timeDiff);
+          }
+          if (timeDiff === Numnotification?.Notification_3) {
+            console.log("timeDifference = " + Numnotification?.Notification_3);
+            schedulePushNotification(foodData?.NameFood, timeDiff);
+            // sendLineNotification(foodData?.NameFood, timeDiff);
+          }
+          if (timeDiff <= 0) {
+            console.log("timeDifference = 0");
+            schedulePushNotification2(foodData?.NameFood, timeDiff);
+            // sendLineNotification(foodData?.NameFood, timeDiff);
+          }
         }
       });
 
@@ -377,45 +381,6 @@ export default function HomeScreen() {
     </>
   );
 }
-
-// async function registerForPushNotificationsAsync() {
-//   let token;
-
-//   if (Platform.OS === "android") {
-//     await Notifications.setNotificationChannelAsync("default", {
-//       name: "default",
-//       importance: Notifications.AndroidImportance.MAX,
-//       vibrationPattern: [0, 250, 250, 250],
-//       lightColor: "#FF231F7C",
-//     });
-//   }
-
-//   if (Device.isDevice) {
-//     const { status: existingStatus } =
-//       await Notifications.getPermissionsAsync();
-//     let finalStatus = existingStatus;
-//     if (existingStatus !== "granted") {
-//       const { status } = await Notifications.requestPermissionsAsync();
-//       finalStatus = status;
-//     }
-//     if (finalStatus !== "granted") {
-//       alert("Failed to get push token for push notification!");
-//       return;
-//     }
-//     // Learn more about projectId:
-//     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-//     token = (
-//       await Notifications.getExpoPushTokenAsync({
-//         projectId: "b1a5dde0-5cba-4f75-b805-43c5dc43c97e",
-//       })
-//     ).data;
-//     console.log(token);
-//   } else {
-//     alert("Must use physical device for Push Notifications");
-//   }
-
-//   return token;
-// }
 
 const styles = StyleSheet.create({
   container: {

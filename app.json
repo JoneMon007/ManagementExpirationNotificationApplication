@@ -1,10 +1,10 @@
 {
   "expo": {
     "name": "Myfreidge",
-    "slug": "Myfreidge",
+    "slug": "Monexpo2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./image/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "image/icon.png",
+        "foregroundImage": "./image/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.Monexpo2",

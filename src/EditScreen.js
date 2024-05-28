@@ -135,7 +135,7 @@ export default function EditScreen({ route }) {
     setImage(null);
     // setSelectedDate(new Date());
     // setLoadingAddItem(false)
-    navigation.navigate("HomeScreen");
+    navigation.navigate("Home");
   }
 
   if (loadingAddItem) {
@@ -182,7 +182,7 @@ export default function EditScreen({ route }) {
 
         <TextInput
           style={styles.input}
-          placeholder="วัตถุดิบที่ใช้ไปเท่าไร"
+          placeholder={`จำนวนวัตถุดิบที่เหลืออยู่ (${totalQuantity}) กรุณาระบุจำนวนที่ใช้ไป`}
           onChangeText={setmaterials_used}
           keyboardType="number-pad"
         />
