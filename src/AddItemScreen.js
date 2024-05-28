@@ -186,52 +186,69 @@ export default function AddItemScreen() {
           )}
         </TouchableOpacity>
 
-        <Picker
-          selectedValue={category}
-          style={styles.picker}
-          onValueChange={handleCategoryChange}
-        >
-          <Picker.Item label="ผัก 🥦" value="ผัก" />
-          <Picker.Item label="เครื่องดื่ม 🥂" value="เครื่องดื่ม" />
-          <Picker.Item label="ผลไม้ 🍎" value="ผลไม้" />
-          <Picker.Item label="เนื้อ 🥩" value="เนื้อ" />
-        </Picker>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>เลือกประเภทวัตถุดิบ : </Text>
+          <Picker
+            selectedValue={category}
+            style={styles.picker}
+            onValueChange={handleCategoryChange}
+          >
+            <Picker.Item label="ผัก 🥦" value="ผัก" />
+            <Picker.Item label="เครื่องดื่ม 🥂" value="เครื่องดื่ม" />
+            <Picker.Item label="ผลไม้ 🍎" value="ผลไม้" />
+            <Picker.Item label="เนื้อ 🥩" value="เนื้อ" />
+          </Picker>
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="ชื่อวัตถุดิบ"
-          value={itemName}
-          onChangeText={setItemName}
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>ชื่อวัตถุดิบ : </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="ชื่อวัตถุดิบ"
+            value={itemName}
+            onChangeText={setItemName}
+          />
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="จำนวนวัตถุดิบ"
-          value={quantity}
-          onChangeText={setQuantity}
-          keyboardType="number-pad"
-        />
-        <Picker
-          selectedValue={unit}
-          style={styles.picker}
-          onValueChange={handleunitChange}
-        >
-          <Picker.Item label="กรัม" value="กรัม" />
-          <Picker.Item label="กิโลกรัม" value="กิโลกรัม" />
-          <Picker.Item label="ชิ้น" value="ชิ้น" />
-          <Picker.Item label="ขวด" value="ขวด" />
-          <Picker.Item label="แพ็ค" value="แพ็ค" />
-          <Picker.Item label="ลูก" value="ลูก" />
-          <Picker.Item label="ตัว" value="ตัว" />
-        </Picker>
-        <TextInput
-          editable={false}
-          selectTextOnFocus={false} // ปิดการเลือกข้อความเมื่อได้รับการโฟกัส
-          caretHidden={true}
-          style={[styles.input]}
-        >
-          {date ? date.toDateString() : ""}
-        </TextInput>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>จำนวนวัตถุดิบ : </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="จำนวนวัตถุดิบ"
+            value={quantity}
+            onChangeText={setQuantity}
+            keyboardType="number-pad"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>เลือกประเภทของจำนวน : </Text>
+          <Picker
+            selectedValue={unit}
+            style={styles.picker}
+            onValueChange={handleunitChange}
+          >
+            <Picker.Item label="กรัม" value="กรัม" />
+            <Picker.Item label="กิโลกรัม" value="กิโลกรัม" />
+            <Picker.Item label="ชิ้น" value="ชิ้น" />
+            <Picker.Item label="ขวด" value="ขวด" />
+            <Picker.Item label="แพ็ค" value="แพ็ค" />
+            <Picker.Item label="ลูก" value="ลูก" />
+            <Picker.Item label="ตัว" value="ตัว" />
+          </Picker>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>วันที่เลือก : </Text>
+          <TextInput
+            editable={false}
+            selectTextOnFocus={false} // ปิดการเลือกข้อความเมื่อได้รับการโฟกัส
+            caretHidden={true}
+            style={[styles.input]}
+          >
+            {date ? date.toDateString() : ""}
+          </TextInput>
+        </View>
         <DateTimeComponent value={date} setDate={setDate} date={date} />
 
         <Pressable style={styles.button} onPress={addItem}>
@@ -265,18 +282,21 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 10,
   },
-  input: {
-    // marginVertical: 10,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#ccc",
-    // padding: 10,
+  inputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10, // ระยะห่างจากบรรทัดอื่น
+  },
+  inputLabel: {
+    marginRight: 10, // ระยะห่างจาก TextInput
+    fontSize: 16, // ปรับขนาดตามต้องการ
+  },
+  input: {
+    flex: 1, // ให้ TextInput ขยายเต็มที่
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
     padding: 10,
-    margin: 10,
   },
   imagePicker: {
     justifyContent: "center",
@@ -288,6 +308,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   picker: {
+    flex: 1,
     marginTop: 10,
     backgroundColor: "#d3d3d3", // darker gray for better contrast
     borderWidth: 2, // thicker border for better visibility

@@ -358,7 +358,7 @@ export default function HomeScreen() {
                           : styles.date_red
                       }
                     >
-                      จำนวนวัดถุดิบคงเหลือ:{" "}
+                      จำนวนวัตถุดิบคงเหลือ:{" "}
                       {item?.totalQuantity || item?.totalQuantity === 0
                         ? item?.totalQuantity
                         : item?.Quantity}{" "}
